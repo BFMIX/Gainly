@@ -22,6 +22,8 @@ Every day is classified as positive, negative, zero after activity, or without a
 - Set optional starting balances.
 - Add income and expenses through quick or detailed entry.
 - Organize transactions by category, income source, payment method, date, and note.
+- Create and rename your own categories and income sources.
+- Choose the default Performance behavior for each category.
 - Choose whether each transaction affects your Performance Balance.
 - Review daily totals and recent activity on the dashboard.
 - Explore performance in a monthly calendar.

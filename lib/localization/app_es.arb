@@ -144,4 +144,19 @@
   "aheadMonthlyTargetInsight": "Vas por delante del ritmo del objetivo mensual.",
   "requiredDailyPaceInsight": "Este ritmo diario mantiene el objetivo mensual al alcance.",
   "viewStatistics": "Ver estadísticas"
+  ,"catalogManagement": "Categorías y orígenes"
+  ,"manageCatalog": "Gestionar categorías y orígenes"
+  ,"incomeCategories": "Categorías de ingresos"
+  ,"expenseCategories": "Categorías de gastos"
+  ,"sources": "Orígenes"
+  ,"addCategory": "Añadir categoría"
+  ,"newCategory": "Nueva categoría"
+  ,"editCategory": "Editar categoría"
+  ,"categoryName": "Nombre de la categoría"
+  ,"categoryType": "Tipo de categoría"
+  ,"defaultPerformance": "Incluir de forma predeterminada en el rendimiento"
+  ,"addSource": "Añadir origen"
+  ,"newSource": "Nuevo origen"
+  ,"editSource": "Editar origen"
+  ,"sourceName": "Nombre del origen"
 }

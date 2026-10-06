@@ -74,6 +74,33 @@ class LedgerController extends ChangeNotifier {
     _emit();
   }
 
+  Future<void> saveCategory(Category value) async {
+    final saved = await repository.saveCategory(value);
+    _revision++;
+    failed = false;
+    categories =
+        [saved, ...categories.where((category) => category.id != saved.id)]
+          ..sort((a, b) {
+            final type = a.type.index.compareTo(b.type.index);
+            return type != 0
+                ? type
+                : a.name.toLowerCase().compareTo(b.name.toLowerCase());
+          });
+    _emit();
+  }
+
+  Future<void> saveSourceName(String name, {IncomeSource? source}) async {
+    final trimmedName = name.trim();
+    final saved = source == null
+        ? IncomeSource(await repository.saveSource(trimmedName), trimmedName)
+        : await repository.updateSource(IncomeSource(source.id, trimmedName));
+    _revision++;
+    failed = false;
+    sources = [saved, ...sources.where((value) => value.id != saved.id)]
+      ..sort((a, b) => a.name.toLowerCase().compareTo(b.name.toLowerCase()));
+    _emit();
+  }
+
   Future<void> deleteTransaction(LedgerTransaction value) async {
     await repository.deleteTransaction(value);
     _revision++;

@@ -144,4 +144,19 @@
   "aheadMonthlyTargetInsight": "You are ahead of this month's target pace.",
   "requiredDailyPaceInsight": "This daily pace will keep your monthly target within reach.",
   "viewStatistics": "View statistics"
+  ,"catalogManagement": "Categories and sources"
+  ,"manageCatalog": "Manage categories and sources"
+  ,"incomeCategories": "Income categories"
+  ,"expenseCategories": "Expense categories"
+  ,"sources": "Sources"
+  ,"addCategory": "Add category"
+  ,"newCategory": "New category"
+  ,"editCategory": "Edit category"
+  ,"categoryName": "Category name"
+  ,"categoryType": "Category type"
+  ,"defaultPerformance": "Include in Performance by default"
+  ,"addSource": "Add source"
+  ,"newSource": "New source"
+  ,"editSource": "Edit source"
+  ,"sourceName": "Source name"
 }

@@ -76,6 +76,158 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.text('Gainly is not connected yet'), findsOneWidget);
   });
+  testWidgets('profile opens category and source management', (tester) async {
+    final repo = MemoryRepository()
+      ..profile = const Profile(
+        userId: 'owner',
+        firstName: 'Alex',
+        language: 'en',
+        currency: 'EUR',
+        startingBalance: 0,
+        startingPerformanceBalance: 0,
+      );
+
+    await tester.pumpWidget(workspace(repo));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Profile'));
+    await tester.pumpAndSettle();
+    expect(find.text('Categories and sources'), findsOneWidget);
+    await tester.ensureVisible(find.text('Categories and sources'));
+    await tester.tap(find.text('Categories and sources'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Manage categories and sources'), findsOneWidget);
+    expect(find.text('Income categories'), findsOneWidget);
+    expect(find.text('Expense categories'), findsOneWidget);
+    expect(find.text('Sources'), findsOneWidget);
+  });
+  testWidgets('a custom category remains available after refresh', (
+    tester,
+  ) async {
+    final repo = MemoryRepository()
+      ..profile = const Profile(
+        userId: 'owner',
+        firstName: 'Alex',
+        language: 'en',
+        currency: 'EUR',
+        startingBalance: 0,
+        startingPerformanceBalance: 0,
+      );
+
+    await tester.pumpWidget(workspace(repo));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Profile'));
+    await tester.pumpAndSettle();
+    await tester.ensureVisible(find.text('Categories and sources'));
+    await tester.tap(find.text('Categories and sources'));
+    await tester.pumpAndSettle();
+
+    expect(find.byKey(const Key('addCategory')), findsOneWidget);
+    await tester.tap(find.byKey(const Key('addCategory')));
+    await tester.pumpAndSettle();
+    await tester.enterText(find.byKey(const Key('catalogName')), 'Tips');
+    await tester.tap(find.text('Save'));
+    await tester.pumpAndSettle();
+    expect(find.text('Tips'), findsOneWidget);
+
+    await tester.pageBack();
+    await tester.pumpAndSettle();
+    await tester.tap(find.byTooltip('Refresh'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Profile'));
+    await tester.pumpAndSettle();
+    await tester.ensureVisible(find.text('Categories and sources'));
+    await tester.tap(find.text('Categories and sources'));
+    await tester.pumpAndSettle();
+    expect(find.text('Tips'), findsOneWidget);
+  });
+  testWidgets('editing a category saves its name and performance default', (
+    tester,
+  ) async {
+    final repo = MemoryRepository()
+      ..profile = const Profile(
+        userId: 'owner',
+        firstName: 'Alex',
+        language: 'en',
+        currency: 'EUR',
+        startingBalance: 0,
+        startingPerformanceBalance: 0,
+      );
+
+    await tester.pumpWidget(workspace(repo));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Profile'));
+    await tester.pumpAndSettle();
+    await tester.ensureVisible(find.text('Categories and sources'));
+    await tester.tap(find.text('Categories and sources'));
+    await tester.pumpAndSettle();
+
+    expect(find.byKey(const Key('editCategory-delivery')), findsOneWidget);
+    await tester.tap(find.byKey(const Key('editCategory-delivery')));
+    await tester.pumpAndSettle();
+    await tester.enterText(
+      find.byKey(const Key('catalogName')),
+      'Courier work',
+    );
+    await tester.tap(find.byType(Switch).last);
+    await tester.tap(find.text('Save'));
+    await tester.pumpAndSettle();
+
+    final saved = repo.categories.singleWhere(
+      (category) => category.id == 'delivery',
+    );
+    expect(saved.name, 'Courier work');
+    expect(saved.translationKey, isNull);
+    expect(saved.countsTowardPerformance, isFalse);
+    expect(find.text('Courier work'), findsOneWidget);
+    expect(find.text('Excluded from Performance'), findsWidgets);
+  });
+  testWidgets('a source can be created, renamed, and reloaded', (tester) async {
+    final repo = MemoryRepository()
+      ..profile = const Profile(
+        userId: 'owner',
+        firstName: 'Alex',
+        language: 'en',
+        currency: 'EUR',
+        startingBalance: 0,
+        startingPerformanceBalance: 0,
+      );
+
+    await tester.pumpWidget(workspace(repo));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Profile'));
+    await tester.pumpAndSettle();
+    await tester.ensureVisible(find.text('Categories and sources'));
+    await tester.tap(find.text('Categories and sources'));
+    await tester.pumpAndSettle();
+
+    expect(find.byKey(const Key('addSource')), findsOneWidget);
+    await tester.tap(find.byKey(const Key('addSource')));
+    await tester.pumpAndSettle();
+    await tester.enterText(find.byKey(const Key('catalogName')), 'Uber Eats');
+    await tester.tap(find.text('Save'));
+    await tester.pumpAndSettle();
+    expect(find.text('Uber Eats'), findsOneWidget);
+
+    await tester.tap(find.byKey(const Key('editSource-source-1')));
+    await tester.pumpAndSettle();
+    await tester.enterText(find.byKey(const Key('catalogName')), 'Deliveroo');
+    await tester.tap(find.text('Save'));
+    await tester.pumpAndSettle();
+    expect(find.text('Deliveroo'), findsOneWidget);
+    expect(find.text('Uber Eats'), findsNothing);
+
+    await tester.pageBack();
+    await tester.pumpAndSettle();
+    await tester.tap(find.byTooltip('Refresh'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Profile'));
+    await tester.pumpAndSettle();
+    await tester.ensureVisible(find.text('Categories and sources'));
+    await tester.tap(find.text('Categories and sources'));
+    await tester.pumpAndSettle();
+    expect(find.text('Deliveroo'), findsOneWidget);
+  });
   testWidgets(
     'onboarding to persisted income updates both balances and survives controller reload',
     (tester) async {

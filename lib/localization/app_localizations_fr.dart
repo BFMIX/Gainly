@@ -464,4 +464,49 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get viewStatistics => 'Voir les statistiques';
+
+  @override
+  String get catalogManagement => 'Catégories et sources';
+
+  @override
+  String get manageCatalog => 'Gérer les catégories et les sources';
+
+  @override
+  String get incomeCategories => 'Catégories de revenus';
+
+  @override
+  String get expenseCategories => 'Catégories de dépenses';
+
+  @override
+  String get sources => 'Sources';
+
+  @override
+  String get addCategory => 'Ajouter une catégorie';
+
+  @override
+  String get newCategory => 'Nouvelle catégorie';
+
+  @override
+  String get editCategory => 'Modifier la catégorie';
+
+  @override
+  String get categoryName => 'Nom de la catégorie';
+
+  @override
+  String get categoryType => 'Type de catégorie';
+
+  @override
+  String get defaultPerformance => 'Inclure par défaut dans la performance';
+
+  @override
+  String get addSource => 'Ajouter une source';
+
+  @override
+  String get newSource => 'Nouvelle source';
+
+  @override
+  String get editSource => 'Modifier la source';
+
+  @override
+  String get sourceName => 'Nom de la source';
 }

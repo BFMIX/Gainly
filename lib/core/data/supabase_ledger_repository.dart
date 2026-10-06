@@ -41,6 +41,23 @@ class SupabaseLedgerRepository implements LedgerRepository {
           .map(Category.fromJson)
           .toList();
   @override
+  Future<Category> saveCategory(Category category) async {
+    final row = await client
+        .from('categories')
+        .upsert({
+          'id': category.id,
+          'user_id': userId,
+          'name': category.name.trim(),
+          'type': category.type.name,
+          'translation_key': category.translationKey,
+          'counts_toward_performance': category.countsTowardPerformance,
+        }, onConflict: 'id')
+        .select()
+        .single();
+    return Category.fromJson(row);
+  }
+
+  @override
   Future<List<IncomeSource>> loadSources() async =>
       (await client
               .from('sources')
@@ -61,6 +78,18 @@ class SupabaseLedgerRepository implements LedgerRepository {
         .select('id')
         .single();
     return row['id'] as String;
+  }
+
+  @override
+  Future<IncomeSource> updateSource(IncomeSource source) async {
+    final row = await client
+        .from('sources')
+        .update({'name': source.name.trim()})
+        .eq('id', source.id)
+        .eq('user_id', userId)
+        .select()
+        .single();
+    return IncomeSource(row['id'] as String, row['name'] as String);
   }
 
   @override

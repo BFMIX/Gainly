@@ -11,6 +11,7 @@ Updated: 2026-10-06.
 - Onboarding with first name, language, currency, and independently optional starting balances.
 - Profile configuration; currency changes blocked after any ledger activity.
 - Default income/expense categories with copied performance defaults and individual transaction overrides.
+- Category and source management with custom creation, renaming, and editable category Performance defaults.
 - Detailed and quick entry for income/expenses, date, payment method, note, reusable source suggestions, and idempotent transaction IDs.
 - Confirmed cloud persistence before balance updates; server-returned audit timestamps.
 - Dashboard prioritizing Performance Balance, secondary Balance, daily totals/state, and recent transactions.
@@ -36,20 +37,20 @@ Auth Site URL remains `http://localhost:7357` for local fallback. The hosted red
 ## Verification evidence
 
 - The public GitHub Pages workflow completed successfully and `https://bfmix.github.io/Gainly/` returned HTTP 200 with the expected `/Gainly/` Flutter base path.
-- Google OAuth initiation from the public Pages release reached Google's account chooser with the Supabase callback and the exact Pages `redirect_to` value. Account selection and consent remain a user-controlled acceptance step.
+- Google OAuth completed successfully through account selection, consent, Supabase callback, and return to the authenticated application on the public Pages release.
 - Final Web release, Android debug APK, and iOS simulator builds succeeded with the actual Gainly development configuration.
 - Final `flutter analyze` reported no issues.
-- 43 unit/widget tests passed: financial calculations, nullable baselines, included/excluded transactions, daily states, tombstones, failed writes/refreshes, idempotence, concurrent refresh handling, EN/FR/ES rendering, validation-message language changes, onboarding-to-dashboard flow, calendar/history behavior, statistics, persisted goal settings, dynamic pace, streaks, Positive Day Rate, deterministic insights, and GitHub Pages authentication redirect preservation.
-- 25 PGlite/PostgreSQL checks passed for both migrations, goal constraints, RLS, invalid/cross-owner references, currency guard, soft deletion, and anonymous access.
+- 47 unit/widget tests passed: financial calculations, nullable baselines, included/excluded transactions, daily states, tombstones, failed writes/refreshes, idempotence, concurrent refresh handling, EN/FR/ES rendering, validation-message language changes, onboarding-to-dashboard flow, category/source management and reload, calendar/history behavior, statistics, persisted goal settings, dynamic pace, streaks, Positive Day Rate, deterministic insights, and GitHub Pages authentication redirect preservation.
+- 31 PGlite/PostgreSQL checks passed for both migrations, category/source creation and editing, immutable copied Performance defaults, goal constraints, RLS, invalid/cross-owner references, currency guard, soft deletion, and anonymous access.
 - Hosted SQL/RLS suite passed; anonymous REST checks passed.
 - iOS simulator secure session and PKCE storage round-trip passed, including restoration through a new storage instance and deletion.
 - iOS simulator financial-flow integration passed: onboarding, transaction entry, repository persistence, and independent balance display. Both native integration tests passed.
 
-The UI tests inject an in-memory repository; they do not prove hosted OAuth or a real authenticated PostgREST round trip. The hosted SQL tests validate database behavior separately. Do not label the full hosted user journey accepted until the configured-auth acceptance checklist passes.
+The UI tests inject an in-memory repository; they do not prove a real authenticated PostgREST ledger round trip. The hosted SQL tests validate database behavior separately. Google OAuth has completed successfully, while the remaining authenticated persistence and recovery checks are tracked below.
 
 ## Remaining setup
 
-- Complete a real Google account selection, consent, callback, and persisted-session acceptance test. Enable Apple later with its provider credentials.
+- Enable Apple later with its provider credentials.
 - Confirm email delivery/SMTP and perform a real email magic-link round trip.
 - Verify sign-in, persisted ledger reload, revocation, and cross-device recovery with a real authorized test account.
 - Confirm or replace the provisional `com.bfmix.gainly` identifier, then select the signing team and distribution configuration before the first store submission.
@@ -58,8 +59,8 @@ The authenticated Supabase dashboard was used to configure and verify the callba
 
 ## Subsequent MVP work
 
-Category/source management; basic badges; durable local financial cache and queued offline mutations; Last Write Wins/conflict tests; invitations and independent server-enforced sharing; notification preferences.
+Basic badges; durable local financial cache and queued offline mutations; Last Write Wins/conflict tests; invitations and independent server-enforced sharing; notification preferences.
 
 The current slice retains loaded data after a refresh error and persists authentication. It does **not** yet provide restart-safe offline financial data, offline writes, sync queues, or cross-device conflict resolution. Sync tests will be introduced with that implementation, not as misleading placeholders.
 
-The connected Web release was inspected in the in-app browser: the French sign-in screen rendered, email validation ran locally without sending a message, and the language selector switched the interface to Spanish. Hosted provider sign-in itself remains unverified.
+The connected Web release was inspected in the in-app browser: the French sign-in screen rendered, email validation ran locally without sending a message, the language selector switched the interface to Spanish, and Google sign-in completed successfully.

@@ -7,6 +7,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '../core/data/supabase_ledger_repository.dart';
 import '../features/auth/auth_screen.dart';
 import '../features/calendar/calendar_screen.dart';
+import '../features/catalog/catalog_screen.dart';
 import '../features/dashboard/dashboard_screen.dart';
 import '../features/onboarding/profile_form.dart';
 import '../features/statistics/statistics_screen.dart';
@@ -238,6 +239,10 @@ class _FinancialWorkspaceState extends State<FinancialWorkspace> {
     ),
   );
 
+  Future<void> showCatalog() => Navigator.of(context).push<void>(
+    MaterialPageRoute(builder: (_) => CatalogScreen(controller: controller)),
+  );
+
   Future<void> logout() async {
     try {
       await widget.onLogout();
@@ -354,6 +359,11 @@ class _FinancialWorkspaceState extends State<FinancialWorkspace> {
                             },
                             onLocale: widget.onLocale,
                           ),
+                        ),
+                        TextButton.icon(
+                          onPressed: showCatalog,
+                          icon: const Icon(Icons.category_outlined),
+                          label: Text(s.catalogManagement),
                         ),
                         TextButton.icon(
                           onPressed: logout,

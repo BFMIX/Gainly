@@ -4,6 +4,30 @@ import 'package:gainly/core/domain/finance.dart';
 class MemoryRepository implements LedgerRepository {
   Profile? profile;
   final entries = <LedgerTransaction>[];
+  final categories = <Category>[
+    const Category(
+      id: 'delivery',
+      name: 'Delivery',
+      type: TransactionType.income,
+      countsTowardPerformance: true,
+      translationKey: 'delivery',
+    ),
+    const Category(
+      id: 'benefits',
+      name: 'Benefits',
+      type: TransactionType.income,
+      countsTowardPerformance: false,
+      translationKey: 'benefits',
+    ),
+    const Category(
+      id: 'food',
+      name: 'Food',
+      type: TransactionType.expense,
+      countsTowardPerformance: true,
+      translationKey: 'food',
+    ),
+  ];
+  final sources = <IncomeSource>[];
   bool failWrites = false, failReads = false;
   @override
   Future<Profile?> loadProfile() async {
@@ -18,33 +42,38 @@ class MemoryRepository implements LedgerRepository {
   }
 
   @override
-  Future<List<Category>> loadCategories() async => const [
-    Category(
-      id: 'delivery',
-      name: 'Delivery',
-      type: TransactionType.income,
-      countsTowardPerformance: true,
-      translationKey: 'delivery',
-    ),
-    Category(
-      id: 'benefits',
-      name: 'Benefits',
-      type: TransactionType.income,
-      countsTowardPerformance: false,
-      translationKey: 'benefits',
-    ),
-    Category(
-      id: 'food',
-      name: 'Food',
-      type: TransactionType.expense,
-      countsTowardPerformance: true,
-      translationKey: 'food',
-    ),
-  ];
+  Future<List<Category>> loadCategories() async => List.of(categories);
   @override
-  Future<List<IncomeSource>> loadSources() async => [];
+  Future<Category> saveCategory(Category category) async {
+    if (failWrites) throw StateError('offline');
+    categories.removeWhere((value) => value.id == category.id);
+    categories.add(category);
+    return category;
+  }
+
   @override
-  Future<String> saveSource(String name) async => 'source';
+  Future<List<IncomeSource>> loadSources() async => List.of(sources);
+  @override
+  Future<String> saveSource(String name) async {
+    if (failWrites) throw StateError('offline');
+    final trimmedName = name.trim();
+    for (final source in sources) {
+      if (source.name == trimmedName) return source.id;
+    }
+    final id = 'source-${sources.length + 1}';
+    sources.add(IncomeSource(id, trimmedName));
+    return id;
+  }
+
+  @override
+  Future<IncomeSource> updateSource(IncomeSource source) async {
+    if (failWrites) throw StateError('offline');
+    final index = sources.indexWhere((value) => value.id == source.id);
+    if (index == -1) throw StateError('Source not found');
+    sources[index] = source;
+    return source;
+  }
+
   @override
   Future<List<LedgerTransaction>> loadTransactions() async =>
       entries.where((entry) => entry.deletedAt == null).toList();

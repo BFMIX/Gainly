@@ -963,6 +963,96 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'View statistics'**
   String get viewStatistics;
+
+  /// No description provided for @catalogManagement.
+  ///
+  /// In en, this message translates to:
+  /// **'Categories and sources'**
+  String get catalogManagement;
+
+  /// No description provided for @manageCatalog.
+  ///
+  /// In en, this message translates to:
+  /// **'Manage categories and sources'**
+  String get manageCatalog;
+
+  /// No description provided for @incomeCategories.
+  ///
+  /// In en, this message translates to:
+  /// **'Income categories'**
+  String get incomeCategories;
+
+  /// No description provided for @expenseCategories.
+  ///
+  /// In en, this message translates to:
+  /// **'Expense categories'**
+  String get expenseCategories;
+
+  /// No description provided for @sources.
+  ///
+  /// In en, this message translates to:
+  /// **'Sources'**
+  String get sources;
+
+  /// No description provided for @addCategory.
+  ///
+  /// In en, this message translates to:
+  /// **'Add category'**
+  String get addCategory;
+
+  /// No description provided for @newCategory.
+  ///
+  /// In en, this message translates to:
+  /// **'New category'**
+  String get newCategory;
+
+  /// No description provided for @editCategory.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit category'**
+  String get editCategory;
+
+  /// No description provided for @categoryName.
+  ///
+  /// In en, this message translates to:
+  /// **'Category name'**
+  String get categoryName;
+
+  /// No description provided for @categoryType.
+  ///
+  /// In en, this message translates to:
+  /// **'Category type'**
+  String get categoryType;
+
+  /// No description provided for @defaultPerformance.
+  ///
+  /// In en, this message translates to:
+  /// **'Include in Performance by default'**
+  String get defaultPerformance;
+
+  /// No description provided for @addSource.
+  ///
+  /// In en, this message translates to:
+  /// **'Add source'**
+  String get addSource;
+
+  /// No description provided for @newSource.
+  ///
+  /// In en, this message translates to:
+  /// **'New source'**
+  String get newSource;
+
+  /// No description provided for @editSource.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit source'**
+  String get editSource;
+
+  /// No description provided for @sourceName.
+  ///
+  /// In en, this message translates to:
+  /// **'Source name'**
+  String get sourceName;
 }
 
 class _AppLocalizationsDelegate

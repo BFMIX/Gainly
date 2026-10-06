@@ -163,6 +163,7 @@ class LedgerTransaction {
     'note': note,
     'entry_mode': entryMode,
     'counts_toward_performance': countsTowardPerformance,
+    'deleted_at': deletedAt?.toUtc().toIso8601String(),
   };
 }
 

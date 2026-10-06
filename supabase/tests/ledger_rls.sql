@@ -9,11 +9,25 @@ select public.save_profile('Synthetic test owner','en','EUR',100000,25000,150000
 select set_config('gainly.test_category', (select id::text from public.categories where translation_key='delivery'), true);
 insert into public.transactions(user_id,amount_minor,type,date,category_id,payment_method,counts_toward_performance)
 values (auth.uid(),5029,'income',current_date,current_setting('gainly.test_category')::uuid,'cash',true);
+select set_config('gainly.test_sync_transaction', gen_random_uuid()::text, true);
+select public.sync_transaction(
+  current_setting('gainly.test_sync_transaction')::uuid, 700, 'income', current_date,
+  current_setting('gainly.test_category')::uuid, null, 'bankTransfer', null,
+  'detailed', true, now(), '2030-01-01T12:00:00Z', null
+);
+select public.sync_transaction(
+  current_setting('gainly.test_sync_transaction')::uuid, 100, 'income', current_date,
+  current_setting('gainly.test_category')::uuid, null, 'bankTransfer', null,
+  'detailed', true, now(), '2029-01-01T12:00:00Z', null
+);
 do $$ begin
   if (select count(*) from public.categories) <> 19 then raise exception 'Category seed failed'; end if;
-  if (select sum(amount_minor) from public.transactions where user_id=auth.uid()) <> 5029 then raise exception 'Owner read failed'; end if;
+  if (select sum(amount_minor) from public.transactions where user_id=auth.uid()) <> 5729 then raise exception 'Owner read failed'; end if;
   if (select monthly_target_minor from public.profiles where user_id=auth.uid()) <> 150000 then raise exception 'Monthly target persistence failed'; end if;
   if (select daily_minimum_minor from public.profiles where user_id=auth.uid()) <> 6000 then raise exception 'Daily minimum persistence failed'; end if;
+  if (select amount_minor from public.transactions where id=current_setting('gainly.test_sync_transaction')::uuid) <> 700 then
+    raise exception 'Older synchronization overwrote newer data';
+  end if;
 end $$;
 select set_config('request.jwt.claim.sub', current_setting('gainly.test_other'), true);
 do $$ begin
@@ -22,6 +36,17 @@ do $$ begin
   end if;
 end $$;
 select public.save_profile('Synthetic second owner','es','EUR',null,null);
+do $$ begin
+  begin
+    perform public.sync_transaction(
+      current_setting('gainly.test_sync_transaction')::uuid, 100, 'income', current_date,
+      (select id from public.categories where translation_key='delivery'), null,
+      'cash', null, 'detailed', true, now(), '2031-01-01T12:00:00Z', null
+    );
+  exception when unique_violation then return;
+  end;
+  raise exception 'Cross-owner synchronized write accepted';
+end $$;
 do $$ begin
   begin
     insert into public.transactions(user_id,amount_minor,type,date,category_id,payment_method,counts_toward_performance)
@@ -61,6 +86,16 @@ do $$ begin
   exception when insufficient_privilege then return;
   end;
   raise exception 'Anonymous ledger access accepted';
+end $$;
+do $$ begin
+  begin
+    perform public.sync_transaction(
+      gen_random_uuid(), 100, 'income', current_date, gen_random_uuid(), null,
+      'cash', null, 'detailed', true, now(), now(), null
+    );
+  exception when insufficient_privilege then return;
+  end;
+  raise exception 'Anonymous synchronization accepted';
 end $$;
 rollback;
 select 'Hosted ledger/RLS checks passed; all fixtures rolled back' as result;

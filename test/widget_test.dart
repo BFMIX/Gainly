@@ -3,6 +3,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:gainly/app/gainly_app.dart';
 import 'package:gainly/app/ledger_controller.dart';
 import 'package:gainly/app/theme.dart';
+import 'package:gainly/core/data/cached_ledger_repository.dart';
+import 'package:gainly/core/data/ledger_repository.dart';
 import 'package:gainly/core/domain/finance.dart';
 import 'package:gainly/localization/app_localizations.dart';
 
@@ -10,7 +12,17 @@ import 'support/memory_repository.dart';
 
 import 'package:gainly/features/auth/auth_screen.dart';
 
-Widget workspace(MemoryRepository repo, {String locale = 'en'}) => MaterialApp(
+class WidgetLedgerStore implements LedgerLocalStore {
+  final values = <String, String>{};
+  @override
+  Future<String?> read(String userId) async => values[userId];
+  @override
+  Future<void> write(String userId, String value) async {
+    values[userId] = value;
+  }
+}
+
+Widget workspace(LedgerRepository repo, {String locale = 'en'}) => MaterialApp(
   theme: GainlyTheme.light,
   locale: Locale(locale),
   supportedLocales: AppLocalizations.supportedLocales,
@@ -75,6 +87,56 @@ void main() {
     await tester.pumpWidget(const GainlyApp());
     await tester.pumpAndSettle();
     expect(find.text('Gainly is not connected yet'), findsOneWidget);
+  });
+  testWidgets('cached workspace explains offline data and pending changes', (
+    tester,
+  ) async {
+    final remote = MemoryRepository()
+      ..profile = const Profile(
+        userId: 'owner',
+        firstName: 'Alex',
+        language: 'en',
+        currency: 'EUR',
+        startingBalance: 0,
+        startingPerformanceBalance: 0,
+      );
+    final store = WidgetLedgerStore();
+    final online = CachedLedgerRepository(
+      userId: 'owner',
+      remote: remote,
+      store: store,
+    );
+    await online.loadProfile();
+    remote.failWrites = true;
+    await online.saveTransaction(
+      LedgerTransaction(
+        id: 'pending',
+        userId: 'owner',
+        amountMinor: 1200,
+        type: TransactionType.income,
+        date: DateTime.now(),
+        categoryId: 'delivery',
+        countsTowardPerformance: true,
+      ),
+    );
+    remote.failReads = true;
+    final restarted = CachedLedgerRepository(
+      userId: 'owner',
+      remote: remote,
+      store: store,
+    );
+
+    await tester.pumpWidget(workspace(restarted));
+    await tester.pumpAndSettle();
+
+    expect(
+      find.text(
+        'Offline — your changes are saved on this device and will sync automatically.',
+      ),
+      findsOneWidget,
+    );
+    expect(find.text('Sync now'), findsOneWidget);
+    expect(find.text('€12.00'), findsWidgets);
   });
   testWidgets('profile opens category and source management', (tester) async {
     final repo = MemoryRepository()
@@ -209,7 +271,7 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.text('Uber Eats'), findsOneWidget);
 
-    await tester.tap(find.byKey(const Key('editSource-source-1')));
+    await tester.tap(find.byKey(Key('editSource-${repo.sources.single.id}')));
     await tester.pumpAndSettle();
     await tester.enterText(find.byKey(const Key('catalogName')), 'Deliveroo');
     await tester.tap(find.text('Save'));

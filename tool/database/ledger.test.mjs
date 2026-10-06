@@ -51,6 +51,14 @@ await db.query(insert, [owner, 1000, 'expense', fuel, null, true]);
 await db.query(insert, [owner, 20000, 'income', delivery, null, false]);
 assert.equal(await scalar(`select sum(case when type='income' then amount_minor else -amount_minor end)::int from public.transactions`), 24029); checks++;
 assert.equal(await scalar(`select sum(case when type='income' then amount_minor else -amount_minor end)::int from public.transactions where counts_toward_performance`), 4029); checks++;
+const syncId = await scalar('select gen_random_uuid()');
+const syncTransaction = `select amount_minor from public.sync_transaction(
+  $1,$2,'income','2026-10-06',$3,null,'bankTransfer',null,'detailed',true,
+  '2026-10-06T08:00:00Z',$4,null)`;
+assert.equal(await scalar(syncTransaction, [syncId, 700, delivery, '2030-01-01T12:00:00Z']), 700); checks++;
+assert.equal(await scalar(syncTransaction, [syncId, 100, delivery, '2029-01-01T12:00:00Z']), 700); checks++;
+assert.equal(await scalar('select amount_minor::int from public.transactions where id=$1', [syncId]), 700); checks++;
+assert.equal(await scalar(syncTransaction, [syncId, 900, delivery, '2031-01-01T12:00:00Z']), 900); checks++;
 const customCategory = await scalar(`insert into public.categories(user_id,name,type,counts_toward_performance)
   values ($1,'Courier bonus','income',true) returning id`, [owner]);
 await db.query("update public.categories set name='Platform bonus', counts_toward_performance=false where id=$1", [customCategory]);
@@ -66,7 +74,7 @@ await rejects(insert, [owner, 100, 'expense', delivery, null, true]);
 await rejects("update public.profiles set currency='USD'");
 await rejects('delete from public.transactions');
 await db.query('update public.transactions set deleted_at=now() where id=$1', [income]);
-assert.equal(await scalar('select count(*)::int from public.transactions where deleted_at is null'), 2); checks++;
+assert.equal(await scalar('select count(*)::int from public.transactions where deleted_at is null'), 3); checks++;
 await asUser(other);
 assert.equal(await scalar('select count(*)::int from public.profiles'), 0); checks++;
 assert.equal(await scalar('select count(*)::int from public.transactions'), 0); checks++;
@@ -75,6 +83,7 @@ await db.query("select public.save_profile('Sam','es','EUR',null,null)");
 const otherCategory = await scalar("select id from public.categories where translation_key='delivery'");
 await rejects(insert, [other, 100, 'income', delivery, null, true]);
 await rejects(insert, [other, 100, 'income', otherCategory, source, true]);
+await rejects(syncTransaction, [syncId, 100, otherCategory, '2032-01-01T12:00:00Z']);
 await rejects(insert, [owner, 100, 'income', delivery, null, true]);
 await rejects('update public.profiles set user_id=$1', [owner]);
 const update = await db.query('update public.transactions set amount_minor=1 where id=$1 returning id', [income]);
@@ -87,5 +96,6 @@ assert.equal(await scalar('select starting_balance_minor from public.profiles'),
 await db.exec('reset role; set role anon');
 await rejects('select * from public.transactions');
 await rejects("select public.save_profile('Guest','en','EUR',0,0)");
+await rejects(syncTransaction, [syncId, 100, delivery, '2032-01-01T12:00:00Z']);
 await db.close();
 console.log(`${checks} database checks passed: migration, onboarding, category/source management, copied performance defaults, ownership, RLS, foreign keys, currency guard, tombstones, and anonymous access.`);

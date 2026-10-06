@@ -1083,6 +1083,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Monthly target reached'**
   String get achievementMonthlyTargetReached;
+
+  /// No description provided for @offlineChangesPending.
+  ///
+  /// In en, this message translates to:
+  /// **'Offline — your changes are saved on this device and will sync automatically.'**
+  String get offlineChangesPending;
+
+  /// No description provided for @offlineCachedData.
+  ///
+  /// In en, this message translates to:
+  /// **'Offline — showing data saved on this device.'**
+  String get offlineCachedData;
+
+  /// No description provided for @syncNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Sync now'**
+  String get syncNow;
 }
 
 class _AppLocalizationsDelegate

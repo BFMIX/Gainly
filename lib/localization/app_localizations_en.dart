@@ -520,4 +520,15 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get achievementMonthlyTargetReached => 'Monthly target reached';
+
+  @override
+  String get offlineChangesPending =>
+      'Offline — your changes are saved on this device and will sync automatically.';
+
+  @override
+  String get offlineCachedData =>
+      'Offline — showing data saved on this device.';
+
+  @override
+  String get syncNow => 'Sync now';
 }

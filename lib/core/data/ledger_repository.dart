@@ -6,8 +6,7 @@ abstract interface class LedgerRepository {
   Future<List<Category>> loadCategories();
   Future<Category> saveCategory(Category category);
   Future<List<IncomeSource>> loadSources();
-  Future<String> saveSource(String name);
-  Future<IncomeSource> updateSource(IncomeSource source);
+  Future<IncomeSource> saveSource(IncomeSource source);
   Future<List<LedgerTransaction>> loadTransactions();
   Future<LedgerTransaction> saveTransaction(LedgerTransaction transaction);
   Future<LedgerTransaction> deleteTransaction(LedgerTransaction transaction);

@@ -2,8 +2,11 @@ import 'dart:async';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import '../core/data/cached_ledger_repository.dart';
+import '../core/data/ledger_repository.dart';
 import '../core/data/supabase_ledger_repository.dart';
 import '../features/auth/auth_screen.dart';
 import '../features/calendar/calendar_screen.dart';
@@ -26,8 +29,9 @@ String authRedirect({required bool isWeb, required Uri base}) {
 }
 
 class GainlyApp extends StatefulWidget {
-  const GainlyApp({super.key, this.client});
+  const GainlyApp({super.key, this.client, this.localStore});
   final SupabaseClient? client;
+  final LedgerLocalStore? localStore;
   @override
   State<GainlyApp> createState() => _GainlyAppState();
 }
@@ -48,6 +52,7 @@ class _GainlyAppState extends State<GainlyApp> {
         ? const SetupScreen()
         : SessionGate(
             client: widget.client!,
+            localStore: widget.localStore,
             onAccountChanged: () =>
                 navigatorKey.currentState?.popUntil((route) => route.isFirst),
             onLocale: (v) {
@@ -93,8 +98,10 @@ class SessionGate extends StatefulWidget {
     required this.client,
     required this.onLocale,
     required this.onAccountChanged,
+    this.localStore,
   });
   final SupabaseClient client;
+  final LedgerLocalStore? localStore;
   final VoidCallback onAccountChanged;
   final ValueChanged<Locale> onLocale;
   @override
@@ -151,10 +158,18 @@ class _SessionGateState extends State<SessionGate> {
       : FinancialWorkspace(
           key: ValueKey(userId),
           userId: userId!,
-          controller: LedgerController(SupabaseLedgerRepository(widget.client)),
+          controller: LedgerController(_repositoryFor(userId!)),
           onLocale: widget.onLocale,
           onLogout: () => widget.client.auth.signOut(),
         );
+
+  LedgerRepository _repositoryFor(String ownerId) {
+    final remote = SupabaseLedgerRepository(widget.client);
+    final store = widget.localStore;
+    return store == null
+        ? remote
+        : CachedLedgerRepository(userId: ownerId, remote: remote, store: store);
+  }
 }
 
 class FinancialWorkspace extends StatefulWidget {
@@ -175,10 +190,18 @@ class FinancialWorkspace extends StatefulWidget {
 
 class _FinancialWorkspaceState extends State<FinancialWorkspace> {
   late final controller = widget.controller;
+  StreamSubscription<List<ConnectivityResult>>? connectivitySubscription;
   int tab = 0;
   @override
   void initState() {
     super.initState();
+    connectivitySubscription = Connectivity().onConnectivityChanged.listen((
+      connections,
+    ) {
+      if (connections.any((value) => value != ConnectivityResult.none)) {
+        unawaited(controller.load());
+      }
+    });
     unawaited(
       controller.load().then((_) {
         if (mounted && controller.profile != null) {
@@ -190,6 +213,7 @@ class _FinancialWorkspaceState extends State<FinancialWorkspace> {
 
   @override
   void dispose() {
+    connectivitySubscription?.cancel();
     controller.dispose();
     super.dispose();
   }
@@ -324,6 +348,21 @@ class _FinancialWorkspaceState extends State<FinancialWorkspace> {
             constraints: const BoxConstraints(maxWidth: 800),
             child: Column(
               children: [
+                if (controller.isOffline)
+                  MaterialBanner(
+                    leading: const Icon(Icons.cloud_off_outlined),
+                    content: Text(
+                      controller.pendingChanges > 0
+                          ? s.offlineChangesPending
+                          : s.offlineCachedData,
+                    ),
+                    actions: [
+                      TextButton(
+                        onPressed: controller.load,
+                        child: Text(s.syncNow),
+                      ),
+                    ],
+                  ),
                 if (controller.failed)
                   MaterialBanner(
                     content: Text(s.loadError),

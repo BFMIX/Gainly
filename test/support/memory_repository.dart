@@ -54,23 +54,14 @@ class MemoryRepository implements LedgerRepository {
   @override
   Future<List<IncomeSource>> loadSources() async => List.of(sources);
   @override
-  Future<String> saveSource(String name) async {
-    if (failWrites) throw StateError('offline');
-    final trimmedName = name.trim();
-    for (final source in sources) {
-      if (source.name == trimmedName) return source.id;
-    }
-    final id = 'source-${sources.length + 1}';
-    sources.add(IncomeSource(id, trimmedName));
-    return id;
-  }
-
-  @override
-  Future<IncomeSource> updateSource(IncomeSource source) async {
+  Future<IncomeSource> saveSource(IncomeSource source) async {
     if (failWrites) throw StateError('offline');
     final index = sources.indexWhere((value) => value.id == source.id);
-    if (index == -1) throw StateError('Source not found');
-    sources[index] = source;
+    if (index == -1) {
+      sources.add(source);
+    } else {
+      sources[index] = source;
+    }
     return source;
   }
 

@@ -164,4 +164,7 @@
   ,"achievementThreePositiveDays": "3 días positivos"
   ,"achievementSevenDayTrackingStreak": "7 días seguidos de seguimiento"
   ,"achievementMonthlyTargetReached": "Objetivo mensual alcanzado"
+  ,"offlineChangesPending": "Sin conexión — tus cambios están guardados en este dispositivo y se sincronizarán automáticamente."
+  ,"offlineCachedData": "Sin conexión — se muestran los datos guardados en este dispositivo."
+  ,"syncNow": "Sincronizar"
 }

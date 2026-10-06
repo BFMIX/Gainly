@@ -98,14 +98,8 @@ class _TransactionFormState extends State<TransactionForm>
                   value.name == source.text.trim(),
             )
             .firstOrNull;
-        sourceId =
-            existing?.id ??
-            await widget.controller.repository.saveSource(source.text.trim());
-        if (!widget.controller.sources.any((s) => s.id == sourceId)) {
-          widget.controller.sources.add(
-            IncomeSource(sourceId, source.text.trim()),
-          );
-        }
+        sourceId = existing?.id;
+        sourceId ??= (await widget.controller.saveSourceName(source.text)).id;
       }
       await widget.controller.saveTransaction(
         LedgerTransaction(

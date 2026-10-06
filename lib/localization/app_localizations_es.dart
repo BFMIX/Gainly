@@ -525,4 +525,15 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get achievementMonthlyTargetReached => 'Objetivo mensual alcanzado';
+
+  @override
+  String get offlineChangesPending =>
+      'Sin conexión — tus cambios están guardados en este dispositivo y se sincronizarán automáticamente.';
+
+  @override
+  String get offlineCachedData =>
+      'Sin conexión — se muestran los datos guardados en este dispositivo.';
+
+  @override
+  String get syncNow => 'Sincronizar';
 }

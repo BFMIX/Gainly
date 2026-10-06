@@ -1,6 +1,8 @@
 import 'package:flutter/foundation.dart' hide Category;
+import 'package:uuid/uuid.dart';
 
 import '../core/data/ledger_repository.dart';
+import '../core/data/cached_ledger_repository.dart';
 import '../core/domain/finance.dart';
 
 class LedgerController extends ChangeNotifier {
@@ -13,6 +15,14 @@ class LedgerController extends ChangeNotifier {
   bool loading = true, failed = false;
   bool _disposed = false;
   int _revision = 0;
+  bool get isOffline => switch (repository) {
+    CachedLedgerRepository cached => cached.isOffline,
+    _ => false,
+  };
+  int get pendingChanges => switch (repository) {
+    CachedLedgerRepository cached => cached.pendingChanges,
+    _ => 0,
+  };
   void _emit() {
     if (!_disposed) notifyListeners();
   }
@@ -89,16 +99,20 @@ class LedgerController extends ChangeNotifier {
     _emit();
   }
 
-  Future<void> saveSourceName(String name, {IncomeSource? source}) async {
+  Future<IncomeSource> saveSourceName(
+    String name, {
+    IncomeSource? source,
+  }) async {
     final trimmedName = name.trim();
-    final saved = source == null
-        ? IncomeSource(await repository.saveSource(trimmedName), trimmedName)
-        : await repository.updateSource(IncomeSource(source.id, trimmedName));
+    final saved = await repository.saveSource(
+      IncomeSource(source?.id ?? const Uuid().v4(), trimmedName),
+    );
     _revision++;
     failed = false;
     sources = [saved, ...sources.where((value) => value.id != saved.id)]
       ..sort((a, b) => a.name.toLowerCase().compareTo(b.name.toLowerCase()));
     _emit();
+    return saved;
   }
 
   Future<void> deleteTransaction(LedgerTransaction value) async {

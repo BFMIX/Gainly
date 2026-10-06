@@ -68,25 +68,14 @@ class SupabaseLedgerRepository implements LedgerRepository {
           .map((j) => IncomeSource(j['id'] as String, j['name'] as String))
           .toList();
   @override
-  Future<String> saveSource(String name) async {
+  Future<IncomeSource> saveSource(IncomeSource source) async {
     final row = await client
         .from('sources')
         .upsert({
+          'id': source.id,
           'user_id': userId,
-          'name': name.trim(),
-        }, onConflict: 'user_id,name')
-        .select('id')
-        .single();
-    return row['id'] as String;
-  }
-
-  @override
-  Future<IncomeSource> updateSource(IncomeSource source) async {
-    final row = await client
-        .from('sources')
-        .update({'name': source.name.trim()})
-        .eq('id', source.id)
-        .eq('user_id', userId)
+          'name': source.name.trim(),
+        }, onConflict: 'id')
         .select()
         .single();
     return IncomeSource(row['id'] as String, row['name'] as String);
@@ -116,25 +105,75 @@ class SupabaseLedgerRepository implements LedgerRepository {
   Future<LedgerTransaction> saveTransaction(
     LedgerTransaction transaction,
   ) async {
-    final row = await client
-        .from('transactions')
-        .upsert(transaction.toJson(), onConflict: 'id')
-        .select()
-        .single();
-    return LedgerTransaction.fromJson(row);
+    final now = DateTime.now().toUtc();
+    return _syncTransaction(
+      _withTimestamps(
+        transaction,
+        createdAt: transaction.createdAt ?? now,
+        updatedAt: transaction.updatedAt ?? now,
+      ),
+    );
   }
 
   @override
   Future<LedgerTransaction> deleteTransaction(
     LedgerTransaction transaction,
   ) async {
-    final row = await client
-        .from('transactions')
-        .update({'deleted_at': DateTime.now().toUtc().toIso8601String()})
-        .eq('id', transaction.id)
-        .eq('user_id', userId)
-        .select()
-        .single();
-    return LedgerTransaction.fromJson(row);
+    final now = DateTime.now().toUtc();
+    return _syncTransaction(
+      _withTimestamps(
+        transaction,
+        createdAt: transaction.createdAt ?? now,
+        updatedAt: now,
+        deletedAt: now,
+      ),
+    );
+  }
+
+  Future<LedgerTransaction> _syncTransaction(
+    LedgerTransaction transaction,
+  ) async {
+    final result = await client.rpc(
+      'sync_transaction',
+      params: {
+        'p_id': transaction.id,
+        'p_amount_minor': transaction.amountMinor,
+        'p_type': transaction.type.name,
+        'p_date': dateKey(transaction.date),
+        'p_category_id': transaction.categoryId,
+        'p_source_id': transaction.sourceId,
+        'p_payment_method': transaction.paymentMethod.name,
+        'p_note': transaction.note,
+        'p_entry_mode': transaction.entryMode,
+        'p_counts_toward_performance': transaction.countsTowardPerformance,
+        'p_created_at': transaction.createdAt!.toIso8601String(),
+        'p_updated_at': transaction.updatedAt!.toIso8601String(),
+        'p_deleted_at': transaction.deletedAt?.toIso8601String(),
+      },
+    );
+    final rows = result as List<dynamic>;
+    return LedgerTransaction.fromJson(rows.single as Map<String, dynamic>);
   }
 }
+
+LedgerTransaction _withTimestamps(
+  LedgerTransaction transaction, {
+  required DateTime createdAt,
+  required DateTime updatedAt,
+  DateTime? deletedAt,
+}) => LedgerTransaction(
+  id: transaction.id,
+  userId: transaction.userId,
+  amountMinor: transaction.amountMinor,
+  type: transaction.type,
+  date: transaction.date,
+  categoryId: transaction.categoryId,
+  countsTowardPerformance: transaction.countsTowardPerformance,
+  sourceId: transaction.sourceId,
+  paymentMethod: transaction.paymentMethod,
+  note: transaction.note,
+  entryMode: transaction.entryMode,
+  createdAt: createdAt,
+  updatedAt: updatedAt,
+  deletedAt: deletedAt ?? transaction.deletedAt,
+);

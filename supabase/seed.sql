@@ -1,0 +1,2 @@
+-- Default categories are created atomically by save_profile for each user.
+-- Never seed real personal financial data.

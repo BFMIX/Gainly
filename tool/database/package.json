@@ -1,0 +1,7 @@
+{
+  "name": "gainly-database-tests",
+  "private": true,
+  "type": "module",
+  "scripts": { "test": "node ledger.test.mjs" },
+  "devDependencies": { "@electric-sql/pglite": "0.3.14" }
+}

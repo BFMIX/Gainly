@@ -159,4 +159,9 @@
   ,"newSource": "Nuevo origen"
   ,"editSource": "Editar origen"
   ,"sourceName": "Nombre del origen"
+  ,"achievements": "Logros"
+  ,"achievementFirstEntry": "Primer registro"
+  ,"achievementThreePositiveDays": "3 días positivos"
+  ,"achievementSevenDayTrackingStreak": "7 días seguidos de seguimiento"
+  ,"achievementMonthlyTargetReached": "Objetivo mensual alcanzado"
 }

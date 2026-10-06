@@ -261,6 +261,17 @@ class _ProgressCard extends StatelessWidget {
           context.strings.requiredDailyPaceInsight,
       };
 
+  String achievementLabel(BuildContext context, AchievementKind kind) =>
+      switch (kind) {
+        AchievementKind.firstEntry => context.strings.achievementFirstEntry,
+        AchievementKind.threePositiveDays =>
+          context.strings.achievementThreePositiveDays,
+        AchievementKind.sevenDayTrackingStreak =>
+          context.strings.achievementSevenDayTrackingStreak,
+        AchievementKind.monthlyTargetReached =>
+          context.strings.achievementMonthlyTargetReached,
+      };
+
   @override
   Widget build(BuildContext context) {
     final target = progress.monthlyTarget;
@@ -331,6 +342,26 @@ class _ProgressCard extends StatelessWidget {
               value:
                   '${rate.toStringAsFixed(rate == rate.roundToDouble() ? 0 : 1)}%',
             ),
+            if (progress.achievements.isNotEmpty) ...[
+              const Divider(height: 28),
+              Text(
+                context.strings.achievements,
+                style: Theme.of(context).textTheme.titleMedium,
+              ),
+              const SizedBox(height: 8),
+              Wrap(
+                spacing: 8,
+                runSpacing: 8,
+                children: progress.achievements
+                    .map(
+                      (achievement) => Chip(
+                        avatar: const Icon(Icons.emoji_events_outlined),
+                        label: Text(achievementLabel(context, achievement)),
+                      ),
+                    )
+                    .toList(growable: false),
+              ),
+            ],
             if (progress.insights.isNotEmpty) ...[
               const Divider(height: 28),
               Text(

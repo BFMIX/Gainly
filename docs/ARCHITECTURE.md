@@ -1,13 +1,13 @@
 # Current architecture
 
-The product specification is the functional source of truth. The current implementation covers the persisted financial flow, category/source management, calendar/history, statistics, and deterministic goal progress. Offline mutation queues and social sharing remain later boundaries.
+The product specification is the functional source of truth. The current implementation covers the persisted financial flow, category/source management, calendar/history, statistics, and deterministic goal progress and achievements. Offline mutation queues and social sharing remain later boundaries.
 
 ## Boundaries
 
 - `app`: application lifecycle, theme, and authenticated routing.
 - `core/domain`: currency-safe money, profile, transaction, and financial calculations. No Flutter or Supabase dependencies.
 - `core/data`: repository contract and Supabase implementation.
-- `features`: authentication, onboarding/profile configuration, category/source management, dashboard, transaction entry/history, calendar, statistics, and deterministic goals/progress.
+- `features`: authentication, onboarding/profile configuration, category/source management, dashboard, transaction entry/history, calendar, statistics, and deterministic goals/progress and achievements.
 - `localization`: English, French, and Spanish ARB resources with generated Flutter localization code.
 
 Use Flutter state primitives for the first slice instead of a third-party state framework. The repository is injected so tests can substitute an in-memory implementation without exposing a demo login in the production application.

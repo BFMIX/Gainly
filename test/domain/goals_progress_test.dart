@@ -264,6 +264,39 @@ void main() {
     );
   });
 
+  group('basic achievements', () {
+    test('unlocks deterministic milestones from financial activity', () {
+      final transactions = [
+        for (var day = 15; day <= 21; day++)
+          entry(id: 'tracked-$day', amount: 100, date: DateTime(2026, 4, day)),
+      ];
+
+      final result = engine.evaluate(
+        asOf: asOf,
+        monthlyTargetMinor: 500,
+        transactions: transactions,
+      );
+
+      expect(result.achievements, [
+        AchievementKind.firstEntry,
+        AchievementKind.threePositiveDays,
+        AchievementKind.sevenDayTrackingStreak,
+        AchievementKind.monthlyTargetReached,
+      ]);
+    });
+
+    test('ignores deleted entries when awarding milestones', () {
+      final result = engine.evaluate(
+        asOf: asOf,
+        transactions: [
+          entry(id: 'deleted', amount: 100, date: asOf, deletedAt: asOf),
+        ],
+      );
+
+      expect(result.achievements, isEmpty);
+    });
+  });
+
   group('smart insights', () {
     test(
       'returns at most two typed insights in deterministic priority order',

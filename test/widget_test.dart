@@ -596,6 +596,37 @@ void main() {
     expect(find.text('Positive Day Rate'), findsOneWidget);
   });
 
+  testWidgets('dashboard shows earned achievements', (tester) async {
+    final repo = MemoryRepository()
+      ..profile = const Profile(
+        userId: 'owner',
+        firstName: 'Alex',
+        language: 'en',
+        currency: 'EUR',
+        startingBalance: 0,
+        startingPerformanceBalance: 0,
+      )
+      ..entries.add(
+        LedgerTransaction(
+          id: 'first-entry',
+          userId: 'owner',
+          amountMinor: 1000,
+          type: TransactionType.income,
+          date: DateTime.now(),
+          categoryId: 'delivery',
+          countsTowardPerformance: true,
+        ),
+      );
+
+    await tester.pumpWidget(workspace(repo));
+    await tester.pumpAndSettle();
+    await tester.drag(find.byType(ListView).first, const Offset(0, -800));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Achievements'), findsOneWidget);
+    expect(find.text('First entry'), findsOneWidget);
+  });
+
   testWidgets('dashboard opens localized statistics with period totals', (
     tester,
   ) async {

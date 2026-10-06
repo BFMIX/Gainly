@@ -1053,6 +1053,36 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Source name'**
   String get sourceName;
+
+  /// No description provided for @achievements.
+  ///
+  /// In en, this message translates to:
+  /// **'Achievements'**
+  String get achievements;
+
+  /// No description provided for @achievementFirstEntry.
+  ///
+  /// In en, this message translates to:
+  /// **'First entry'**
+  String get achievementFirstEntry;
+
+  /// No description provided for @achievementThreePositiveDays.
+  ///
+  /// In en, this message translates to:
+  /// **'3 positive days'**
+  String get achievementThreePositiveDays;
+
+  /// No description provided for @achievementSevenDayTrackingStreak.
+  ///
+  /// In en, this message translates to:
+  /// **'7-day tracking streak'**
+  String get achievementSevenDayTrackingStreak;
+
+  /// No description provided for @achievementMonthlyTargetReached.
+  ///
+  /// In en, this message translates to:
+  /// **'Monthly target reached'**
+  String get achievementMonthlyTargetReached;
 }
 
 class _AppLocalizationsDelegate

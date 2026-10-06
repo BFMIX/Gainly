@@ -32,6 +32,7 @@ Every day is classified as positive, negative, zero after activity, or without a
 - Set a Monthly Target and your own Daily Minimum.
 - Follow the daily pace needed to reach your monthly target.
 - Track streaks, positive days, and useful insights.
+- Unlock simple achievements for consistent financial tracking.
 
 ## Platforms and languages
 

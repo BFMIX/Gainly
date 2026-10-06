@@ -159,4 +159,9 @@
   ,"newSource": "New source"
   ,"editSource": "Edit source"
   ,"sourceName": "Source name"
+  ,"achievements": "Achievements"
+  ,"achievementFirstEntry": "First entry"
+  ,"achievementThreePositiveDays": "3 positive days"
+  ,"achievementSevenDayTrackingStreak": "7-day tracking streak"
+  ,"achievementMonthlyTargetReached": "Monthly target reached"
 }

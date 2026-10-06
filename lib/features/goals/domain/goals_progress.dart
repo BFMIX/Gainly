@@ -9,6 +9,13 @@ enum SmartInsightKind {
   requiredDailyPace,
 }
 
+enum AchievementKind {
+  firstEntry,
+  threePositiveDays,
+  sevenDayTrackingStreak,
+  monthlyTargetReached,
+}
+
 class MonthlyTargetProgress {
   const MonthlyTargetProgress({
     required this.targetMinor,
@@ -92,6 +99,7 @@ class GoalsProgressSnapshot {
     required this.monthlyTarget,
     required this.dailyMinimum,
     required this.streaks,
+    required this.achievements,
     required this.insights,
   });
 
@@ -100,6 +108,7 @@ class GoalsProgressSnapshot {
   final MonthlyTargetProgress? monthlyTarget;
   final DailyMinimumProgress? dailyMinimum;
   final StreakSummary streaks;
+  final List<AchievementKind> achievements;
   final List<SmartInsight> insights;
 }
 
@@ -171,6 +180,11 @@ class GoalsProgressEngine {
       monthlyTarget: target,
       startingPerformanceBalanceMinor: startingPerformanceBalanceMinor,
     );
+    final achievements = _achievements(
+      transactions: activeTransactions,
+      monthlyTarget: target,
+      streaks: streaks,
+    );
 
     return GoalsProgressSnapshot(
       asOf: today,
@@ -178,8 +192,33 @@ class GoalsProgressEngine {
       monthlyTarget: target,
       dailyMinimum: dailyMinimum,
       streaks: streaks,
+      achievements: List.unmodifiable(achievements),
       insights: List.unmodifiable(insights.take(2)),
     );
+  }
+
+  List<AchievementKind> _achievements({
+    required List<LedgerTransaction> transactions,
+    required MonthlyTargetProgress? monthlyTarget,
+    required StreakSummary streaks,
+  }) {
+    final achievements = <AchievementKind>[];
+    if (transactions.isNotEmpty) {
+      achievements.add(AchievementKind.firstEntry);
+    }
+    final positiveDays = _performanceStates(transactions).values
+        .where((state) => state == DayState.positive)
+        .length;
+    if (positiveDays >= 3) {
+      achievements.add(AchievementKind.threePositiveDays);
+    }
+    if (streaks.trackingStreak >= 7) {
+      achievements.add(AchievementKind.sevenDayTrackingStreak);
+    }
+    if (monthlyTarget?.isReached ?? false) {
+      achievements.add(AchievementKind.monthlyTargetReached);
+    }
+    return achievements;
   }
 
   MonthlyTargetProgress _monthlyTarget({

@@ -19,6 +19,7 @@ Updated: 2026-10-06.
 - Chronological transaction history with localized search, period/type/category/source/performance filters, existing-entry editing, confirmation, and soft deletion.
 - Statistics for selectable periods: balances, totals, daily/weekly/monthly results, category/source distributions, day-state counts, Positive Day Rate, longest positive streak, and Performance Balance evolution.
 - Optional Monthly Target and user-controlled Daily Minimum persisted in the profile, with dynamic calendar-day pace, Tracking/Positive streaks, and at most two deterministic Smart Insights.
+- Four deterministic achievements derived from active financial data: First Entry, 3 Positive Days, 7-Day Tracking Streak, and Monthly Target Reached.
 - Integer minor-unit financial calculations and distinct no-activity/zero-after-activity states.
 - Owner-only schema/RLS, cross-owner foreign-key protection, soft-deletion fields, audit guards, explicit API grants, and atomic onboarding RPC.
 
@@ -40,7 +41,7 @@ Auth Site URL remains `http://localhost:7357` for local fallback. The hosted red
 - Google OAuth completed successfully through account selection, consent, Supabase callback, and return to the authenticated application on the public Pages release.
 - Final Web release, Android debug APK, and iOS simulator builds succeeded with the actual Gainly development configuration.
 - Final `flutter analyze` reported no issues.
-- 47 unit/widget tests passed: financial calculations, nullable baselines, included/excluded transactions, daily states, tombstones, failed writes/refreshes, idempotence, concurrent refresh handling, EN/FR/ES rendering, validation-message language changes, onboarding-to-dashboard flow, category/source management and reload, calendar/history behavior, statistics, persisted goal settings, dynamic pace, streaks, Positive Day Rate, deterministic insights, and GitHub Pages authentication redirect preservation.
+- 50 unit/widget tests passed: financial calculations, nullable baselines, included/excluded transactions, daily states, tombstones, failed writes/refreshes, idempotence, concurrent refresh handling, EN/FR/ES rendering, validation-message language changes, onboarding-to-dashboard flow, category/source management and reload, calendar/history behavior, statistics, persisted goal settings, dynamic pace, streaks, Positive Day Rate, deterministic achievements and insights, and GitHub Pages authentication redirect preservation.
 - 31 PGlite/PostgreSQL checks passed for both migrations, category/source creation and editing, immutable copied Performance defaults, goal constraints, RLS, invalid/cross-owner references, currency guard, soft deletion, and anonymous access.
 - Hosted SQL/RLS suite passed; anonymous REST checks passed.
 - iOS simulator secure session and PKCE storage round-trip passed, including restoration through a new storage instance and deletion.
@@ -59,7 +60,7 @@ The authenticated Supabase dashboard was used to configure and verify the callba
 
 ## Subsequent MVP work
 
-Basic badges; durable local financial cache and queued offline mutations; Last Write Wins/conflict tests; invitations and independent server-enforced sharing; notification preferences.
+Durable local financial cache and queued offline mutations; Last Write Wins/conflict tests; invitations and independent server-enforced sharing; notification preferences.
 
 The current slice retains loaded data after a refresh error and persists authentication. It does **not** yet provide restart-safe offline financial data, offline writes, sync queues, or cross-device conflict resolution. Sync tests will be introduced with that implementation, not as misleading placeholders.
 

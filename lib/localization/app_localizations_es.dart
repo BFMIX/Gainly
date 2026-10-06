@@ -509,4 +509,20 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get sourceName => 'Nombre del origen';
+
+  @override
+  String get achievements => 'Logros';
+
+  @override
+  String get achievementFirstEntry => 'Primer registro';
+
+  @override
+  String get achievementThreePositiveDays => '3 días positivos';
+
+  @override
+  String get achievementSevenDayTrackingStreak =>
+      '7 días seguidos de seguimiento';
+
+  @override
+  String get achievementMonthlyTargetReached => 'Objetivo mensual alcanzado';
 }

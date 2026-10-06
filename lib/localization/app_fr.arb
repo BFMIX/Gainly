@@ -159,4 +159,9 @@
   ,"newSource": "Nouvelle source"
   ,"editSource": "Modifier la source"
   ,"sourceName": "Nom de la source"
+  ,"achievements": "Réussites"
+  ,"achievementFirstEntry": "Première saisie"
+  ,"achievementThreePositiveDays": "3 jours positifs"
+  ,"achievementSevenDayTrackingStreak": "7 jours de suivi consécutifs"
+  ,"achievementMonthlyTargetReached": "Objectif mensuel atteint"
 }

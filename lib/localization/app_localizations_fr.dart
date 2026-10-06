@@ -509,4 +509,20 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get sourceName => 'Nom de la source';
+
+  @override
+  String get achievements => 'Réussites';
+
+  @override
+  String get achievementFirstEntry => 'Première saisie';
+
+  @override
+  String get achievementThreePositiveDays => '3 jours positifs';
+
+  @override
+  String get achievementSevenDayTrackingStreak =>
+      '7 jours de suivi consécutifs';
+
+  @override
+  String get achievementMonthlyTargetReached => 'Objectif mensuel atteint';
 }

@@ -486,6 +486,15 @@ MVP gamification:
 * basic milestones/badges
 * contextual encouragement
 
+Initial MVP achievements are deterministic and derived from active financial data:
+
+* First Entry — record the first transaction
+* 3 Positive Days — complete three positive Performance days
+* 7-Day Tracking Streak — record activity for seven consecutive days
+* Monthly Target Reached — meet or exceed the configured Monthly Target
+
+Deleted transactions do not count toward achievements. Achievements do not use points, levels, or competitive ranking.
+
 Do NOT implement:
 
 * XP systems

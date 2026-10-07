@@ -4,11 +4,16 @@ import 'package:uuid/uuid.dart';
 import '../core/data/ledger_repository.dart';
 import '../core/data/cached_ledger_repository.dart';
 import '../core/domain/finance.dart';
+import '../core/domain/notification_preferences.dart';
+import '../features/notifications/notification_coordinator.dart';
 
 class LedgerController extends ChangeNotifier {
-  LedgerController(this.repository);
+  LedgerController(this.repository, {this.notifications});
   final LedgerRepository repository;
+  final NotificationCoordinator? notifications;
   Profile? profile;
+  NotificationPreferences notificationPreferences =
+      const NotificationPreferences();
   List<Category> categories = [];
   List<IncomeSource> sources = [];
   List<LedgerTransaction> transactions = [];
@@ -43,11 +48,26 @@ class LedgerController extends ChangeNotifier {
       final nextTransactions = nextProfile == null
           ? <LedgerTransaction>[]
           : await repository.loadTransactions();
+      final nextNotificationPreferences = nextProfile == null
+          ? const NotificationPreferences()
+          : await repository.loadNotificationPreferences();
       if (_disposed || revision != _revision) return;
       profile = nextProfile;
       categories = nextCategories;
       sources = nextSources;
       transactions = nextTransactions;
+      notificationPreferences = nextNotificationPreferences;
+      if (nextProfile != null) {
+        try {
+          await notifications?.applyPreferences(
+            profile: nextProfile,
+            preferences: nextNotificationPreferences,
+            transactions: nextTransactions,
+          );
+        } catch (_) {
+          // Notification delivery must never block access to financial data.
+        }
+      }
     } catch (_) {
       if (revision == _revision) failed = true;
     } finally {
@@ -66,10 +86,20 @@ class LedgerController extends ChangeNotifier {
     failed = false;
     profile = value;
     categories = nextCategories;
+    try {
+      await notifications?.applyPreferences(
+        profile: value,
+        preferences: notificationPreferences,
+        transactions: transactions,
+      );
+    } catch (_) {
+      // Profile persistence succeeds even when notification setup is denied.
+    }
     _emit();
   }
 
   Future<void> saveTransaction(LedgerTransaction value) async {
+    final previousTransactions = List<LedgerTransaction>.of(transactions);
     final saved = await repository.saveTransaction(value);
     _revision++;
     loading = false;
@@ -81,6 +111,42 @@ class LedgerController extends ChangeNotifier {
             ? day
             : (b.createdAt ?? b.date).compareTo(a.createdAt ?? a.date);
       });
+    final currentProfile = profile;
+    if (currentProfile != null) {
+      try {
+        await notifications?.afterFinancialChange(
+          profile: currentProfile,
+          preferences: notificationPreferences,
+          previousTransactions: previousTransactions,
+          currentTransactions: transactions,
+        );
+      } catch (_) {
+        // The transaction is already durable; notification failure is nonfatal.
+      }
+    }
+    _emit();
+  }
+
+  Future<void> saveNotificationPreferences(
+    NotificationPreferences value,
+  ) async {
+    notificationPreferences = await repository.saveNotificationPreferences(
+      value,
+    );
+    final currentProfile = profile;
+    if (currentProfile != null) {
+      try {
+        await notifications?.applyPreferences(
+          profile: currentProfile,
+          preferences: notificationPreferences,
+          transactions: transactions,
+        );
+      } catch (_) {
+        // Preferences remain saved even when the OS rejects notification work.
+      }
+    }
+    _revision++;
+    failed = false;
     _emit();
   }
 
@@ -116,12 +182,34 @@ class LedgerController extends ChangeNotifier {
   }
 
   Future<void> deleteTransaction(LedgerTransaction value) async {
+    final previousTransactions = List<LedgerTransaction>.of(transactions);
     await repository.deleteTransaction(value);
     _revision++;
     loading = false;
     failed = false;
     transactions = transactions.where((entry) => entry.id != value.id).toList();
+    final currentProfile = profile;
+    if (currentProfile != null) {
+      try {
+        await notifications?.afterFinancialChange(
+          profile: currentProfile,
+          preferences: notificationPreferences,
+          previousTransactions: previousTransactions,
+          currentTransactions: transactions,
+        );
+      } catch (_) {
+        // The deletion is already durable; notification failure is nonfatal.
+      }
+    }
     _emit();
+  }
+
+  Future<void> endSession() async {
+    try {
+      await notifications?.endSession();
+    } catch (_) {
+      // Signing out must proceed even if the OS notification service fails.
+    }
   }
 
   @override

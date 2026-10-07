@@ -143,28 +143,57 @@
   "behindMonthlyTargetInsight": "Vous êtes en retard sur le rythme de l’objectif mensuel.",
   "aheadMonthlyTargetInsight": "Vous êtes en avance sur le rythme de l’objectif mensuel.",
   "requiredDailyPaceInsight": "Ce rythme quotidien permet de garder l’objectif mensuel à portée.",
-  "viewStatistics": "Voir les statistiques"
-  ,"catalogManagement": "Catégories et sources"
-  ,"manageCatalog": "Gérer les catégories et les sources"
-  ,"incomeCategories": "Catégories de revenus"
-  ,"expenseCategories": "Catégories de dépenses"
-  ,"sources": "Sources"
-  ,"addCategory": "Ajouter une catégorie"
-  ,"newCategory": "Nouvelle catégorie"
-  ,"editCategory": "Modifier la catégorie"
-  ,"categoryName": "Nom de la catégorie"
-  ,"categoryType": "Type de catégorie"
-  ,"defaultPerformance": "Inclure par défaut dans la performance"
-  ,"addSource": "Ajouter une source"
-  ,"newSource": "Nouvelle source"
-  ,"editSource": "Modifier la source"
-  ,"sourceName": "Nom de la source"
-  ,"achievements": "Réussites"
-  ,"achievementFirstEntry": "Première saisie"
-  ,"achievementThreePositiveDays": "3 jours positifs"
-  ,"achievementSevenDayTrackingStreak": "7 jours de suivi consécutifs"
-  ,"achievementMonthlyTargetReached": "Objectif mensuel atteint"
-  ,"offlineChangesPending": "Hors connexion — vos modifications sont enregistrées sur cet appareil et seront synchronisées automatiquement."
-  ,"offlineCachedData": "Hors connexion — affichage des données enregistrées sur cet appareil."
-  ,"syncNow": "Synchroniser"
+  "viewStatistics": "Voir les statistiques",
+  "catalogManagement": "Catégories et sources",
+  "manageCatalog": "Gérer les catégories et les sources",
+  "incomeCategories": "Catégories de revenus",
+  "expenseCategories": "Catégories de dépenses",
+  "sources": "Sources",
+  "addCategory": "Ajouter une catégorie",
+  "newCategory": "Nouvelle catégorie",
+  "editCategory": "Modifier la catégorie",
+  "categoryName": "Nom de la catégorie",
+  "categoryType": "Type de catégorie",
+  "defaultPerformance": "Inclure par défaut dans la performance",
+  "addSource": "Ajouter une source",
+  "newSource": "Nouvelle source",
+  "editSource": "Modifier la source",
+  "sourceName": "Nom de la source",
+  "achievements": "Réussites",
+  "achievementFirstEntry": "Première saisie",
+  "achievementThreePositiveDays": "3 jours positifs",
+  "achievementSevenDayTrackingStreak": "7 jours de suivi consécutifs",
+  "achievementMonthlyTargetReached": "Objectif mensuel atteint",
+  "offlineChangesPending": "Hors connexion — vos modifications sont enregistrées sur cet appareil et seront synchronisées automatiquement.",
+  "offlineCachedData": "Hors connexion — affichage des données enregistrées sur cet appareil.",
+  "syncNow": "Synchroniser",
+  "notificationSettings": "Notifications",
+  "dailyReminder": "Rappel quotidien",
+  "dailyReminderHelp": "Me rappeler d’enregistrer ma journée lorsqu’il n’y a aucune activité.",
+  "reminderTime": "Heure du rappel",
+  "importantAlerts": "Alertes importantes",
+  "negativeDaysWarning": "Plusieurs jours négatifs",
+  "negativeDaysWarningHelp": "Me prévenir après trois jours actifs négatifs consécutifs.",
+  "performanceBalanceWarning": "Risque sur la Performance Balance",
+  "performanceBalanceWarningHelp": "Me prévenir lorsque la Performance Balance atteint zéro.",
+  "optionalEncouragement": "Encouragements facultatifs",
+  "streakEncouragement": "Encouragement de série",
+  "badgeNotifications": "Badges de réussite",
+  "goalProgressNotifications": "Progression des objectifs",
+  "notificationSettingsSaved": "Préférences de notification enregistrées",
+  "dailyReminderNotificationTitle": "Comment s’est passée ta journée ?",
+  "dailyReminderNotificationBody": "Enregistre les revenus et dépenses du jour dans Gainly.",
+  "performanceBalanceRiskNotificationTitle": "Alerte Performance Balance",
+  "performanceBalanceRiskNotificationBody": "Ta Performance Balance a atteint zéro. Vérifie l’activité du jour.",
+  "negativeDaysNotificationTitle": "Trois jours négatifs",
+  "negativeDaysNotificationBody": "Trois jours actifs consécutifs ont été négatifs. Vérifie ton activité récente.",
+  "positiveMilestoneNotifications": "Étapes positives",
+  "monthlyGoalNotificationTitle": "Objectif mensuel atteint",
+  "monthlyGoalNotificationBody": "Tu as atteint ton objectif de revenu mensuel.",
+  "achievementUnlockedNotificationTitle": "Réussite débloquée",
+  "streakNotificationTitle": "Ta dynamique progresse",
+  "streakNotificationBody": "Ta régularité a atteint une nouvelle étape de série.",
+  "positiveMilestoneNotificationTitle": "Étape positive",
+  "positiveMilestoneNotificationBody": "Ta Performance Balance a atteint une nouvelle étape positive.",
+  "dailyReminderWebLimitation": "Les rappels quotidiens en arrière-plan nécessitent l’application iOS ou Android."
 }

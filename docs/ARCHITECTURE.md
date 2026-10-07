@@ -1,13 +1,13 @@
 # Current architecture
 
-The product specification is the functional source of truth. The current implementation covers the persisted financial flow, category/source management, calendar/history, statistics, deterministic goal progress and achievements, and restart-safe offline synchronization. Social sharing remains a later boundary.
+The product specification is the functional source of truth. The current implementation covers the persisted financial flow, category/source management, calendar/history, statistics, deterministic goal progress and achievements, restart-safe offline synchronization, and local notifications. Social sharing remains a later boundary.
 
 ## Boundaries
 
 - `app`: application lifecycle, theme, and authenticated routing.
 - `core/domain`: currency-safe money, profile, transaction, and financial calculations. No Flutter or Supabase dependencies.
 - `core/data`: repository contract, Supabase implementation, encrypted local cache, and durable mutation queue.
-- `features`: authentication, onboarding/profile configuration, category/source management, dashboard, transaction entry/history, calendar, statistics, and deterministic goals/progress and achievements.
+- `features`: authentication, onboarding/profile configuration, category/source management, dashboard, transaction entry/history, calendar, statistics, deterministic goals/progress and achievements, and notification planning/delivery.
 - `localization`: English, French, and Spanish ARB resources with generated Flutter localization code.
 
 Use Flutter state primitives for the first slice instead of a third-party state framework. The repository is injected so tests can substitute an in-memory implementation without exposing a demo login in the production application.
@@ -28,6 +28,12 @@ Profile, category, source, and transaction mutations are applied locally first. 
 
 OAuth uses Supabase's PKCE flow and native callback links. Email is a magic-link fallback. Native sessions use secure storage. On web the browser storage provided by the secure-storage plugin cannot offer native keychain guarantees; HTTPS and XSS prevention remain essential. Network/auth stream errors do not explicitly sign the user out.
 
+## Notifications
+
+Notification preferences are owner-scoped in Supabase and use the same durable offline queue as profile settings. Important alerts and the 20:00 local daily reminder are enabled by default; streak, achievement, goal-progress, and positive-milestone messages require opt-in. Performance Balance risk covers crossing zero, crossing down to 10 currency units or less, and a drop of at least 25% and 50 currency units. Negative-day warnings require three adjacent calendar days. The planning engine emits at most one financial alert for each ledger mutation, with Performance Balance risk taking priority.
+
+iOS and Android request notification authorization when an enabled account first loads, schedule the next daily reminder in local time, and restore it after reboot on Android. Signing out cancels the account reminder. The app uses inexact Android scheduling, so it does not request exact-alarm access. Web browsers support immediate notifications while the app is open, but the notification plugin cannot schedule delivery after the page is closed; the settings screen explains this limitation.
+
 ## Delivery sequence
 
 1. Scaffold all platforms, theme, localization, domain and test foundations.
@@ -36,7 +42,8 @@ OAuth uses Supabase's PKCE flow and native callback links. Email is a magic-link
 4. Add calendar/history, statistics, goals, streaks, and deterministic insights.
 5. Run domain/widget tests, analyzer, Web/Android/iOS builds, and database checks.
 6. Add restart-safe offline persistence/outbox and Last Write Wins conflict handling.
-7. Add server-authorized profile sharing and notifications only after sync hardening.
+7. Add configurable local notifications after sync hardening.
+8. Add server-authorized profile sharing.
 
 Offline writes use timestamped tombstones and a durable per-user outbox. Server receipt timestamps remain separate from the client modification timestamps used for conflict ordering.
 

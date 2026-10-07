@@ -34,6 +34,7 @@ Every day is classified as positive, negative, zero after activity, or without a
 - Track streaks, positive days, and useful insights.
 - Unlock simple achievements for consistent financial tracking.
 - Keep using the ledger during temporary network loss and synchronize saved changes automatically.
+- Configure daily reminders and financial alerts, with optional streak, achievement, goal, and positive-milestone encouragement.
 
 ## Platforms and languages
 
@@ -41,7 +42,7 @@ Gainly is being prepared for iOS, Android, and Web. The interface supports Engli
 
 ## Preview status
 
-Gainly is under active development and should currently be treated as a testing preview. Apple sign-in, notifications, linked profiles, and sharing are planned for later releases.
+Gainly is under active development and should currently be treated as a testing preview. Apple sign-in, linked profiles, and sharing are planned for later releases. Scheduled daily reminders are available in the iOS and Android apps; browsers cannot deliver Gainly reminders after the Web preview is closed.
 
 Do not rely on the preview as the only record of important financial information.
 

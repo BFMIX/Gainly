@@ -33,7 +33,7 @@ Pass the file with `--dart-define-from-file=config/development.json`. It is inte
 The following Auth URL settings are required for development:
 
 - Local Web site URL and allowed redirect: `http://localhost:7357`.
-- Native allowed redirect: `com.bfmix.gainly://auth-callback`. The app is configured for this value; the hosted dashboard still contains the previous native redirect and must be updated before native Auth acceptance.
+- Native allowed redirect: `com.bfmix.gainly://auth-callback`.
 - Add the exact production HTTPS URL when a deployment domain is selected.
 
 The app uses PKCE. Native callback handling is configured in AndroidManifest.xml and Info.plist. Flutter's built-in deep-link handling is disabled for these auth callbacks so the Supabase app-links handler owns the exchange.
@@ -53,11 +53,11 @@ Native session persistence uses flutter_secure_storage. iOS Keychain entitlement
 5. Sign in on another device and confirm persisted history and profile are restored.
 6. Revoke the session and verify protected screens close. Interrupt the network and verify it does not trigger an explicit logout.
 
-Durable offline financial caching and queued offline mutations are not implemented in this first slice and must be completed before offline acceptance is claimed.
+Interrupt the network during acceptance to confirm cached reads, queued profile/catalog/notification/transaction changes, reconnect retry, and the visible pending state. Native cache files are encrypted; Web storage remains subject to browser security limits.
 
 ## Current development project
 
-The dedicated project is [Gainly in Supabase](https://supabase.com/dashboard/project/tzysspfpovbnmbwvocxh), hosted in Paris. Both current migrations are already applied and the local ignored development configuration is populated. Do not apply them again manually.
+The dedicated project is [Gainly in Supabase](https://supabase.com/dashboard/project/tzysspfpovbnmbwvocxh), hosted in Paris. All migrations under `supabase/migrations/` are applied and their versions match hosted history. The local ignored development configuration is populated. Do not apply them again manually.
 
 The hosted authorization test script is `supabase/tests/ledger_rls.sql`. It creates synthetic users within a transaction, asserts owner isolation and constraints, and rolls back all fixtures. `python3 tool/check_backend.py` checks public Auth reachability and anonymous REST denial without printing keys or sending email.
 

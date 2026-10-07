@@ -1,5 +1,6 @@
 import 'package:gainly/core/data/ledger_repository.dart';
 import 'package:gainly/core/domain/finance.dart';
+import 'package:gainly/core/domain/notification_preferences.dart';
 
 class MemoryRepository implements LedgerRepository {
   Profile? profile;
@@ -29,6 +30,8 @@ class MemoryRepository implements LedgerRepository {
   ];
   final sources = <IncomeSource>[];
   bool failWrites = false, failReads = false;
+  NotificationPreferences notificationPreferences =
+      const NotificationPreferences();
   @override
   Future<Profile?> loadProfile() async {
     if (failReads) throw StateError('offline');
@@ -39,6 +42,21 @@ class MemoryRepository implements LedgerRepository {
   Future<void> saveProfile(Profile value) async {
     if (failWrites) throw StateError('offline');
     profile = value;
+  }
+
+  @override
+  Future<NotificationPreferences> loadNotificationPreferences() async {
+    if (failReads) throw StateError('offline');
+    return notificationPreferences;
+  }
+
+  @override
+  Future<NotificationPreferences> saveNotificationPreferences(
+    NotificationPreferences value,
+  ) async {
+    if (failWrites) throw StateError('offline');
+    notificationPreferences = value;
+    return value;
   }
 
   @override

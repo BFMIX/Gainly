@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import '../domain/finance.dart';
+import '../domain/notification_preferences.dart';
 import 'ledger_repository.dart';
 
 abstract interface class LedgerLocalStore {
@@ -22,10 +23,13 @@ class CachedLedgerRepository implements LedgerRepository {
   final DateTime Function() _clock;
 
   Profile? _profile;
+  NotificationPreferences _notificationPreferences =
+      const NotificationPreferences();
   List<Category> _categories = [];
   List<IncomeSource> _sources = [];
   List<LedgerTransaction> _transactions = [];
   bool _pendingProfile = false;
+  bool _pendingNotificationPreferences = false;
   final Set<String> _pendingCategoryIds = {};
   final Set<String> _pendingSourceIds = {};
   final Set<String> _pendingTransactionIds = {};
@@ -35,6 +39,7 @@ class CachedLedgerRepository implements LedgerRepository {
 
   int get pendingChanges =>
       (_pendingProfile ? 1 : 0) +
+      (_pendingNotificationPreferences ? 1 : 0) +
       _pendingCategoryIds.length +
       _pendingSourceIds.length +
       _pendingTransactionIds.length;
@@ -48,6 +53,11 @@ class CachedLedgerRepository implements LedgerRepository {
     _hasLocalState = true;
     final profileJson = json['profile'] as Map<String, dynamic>?;
     _profile = profileJson == null ? null : Profile.fromJson(profileJson);
+    final notificationPreferencesJson =
+        json['notification_preferences'] as Map<String, dynamic>?;
+    _notificationPreferences = notificationPreferencesJson == null
+        ? const NotificationPreferences()
+        : NotificationPreferences.fromJson(notificationPreferencesJson);
     _categories = (json['categories'] as List<dynamic>? ?? const [])
         .map((value) => _categoryFromJson(value as Map<String, dynamic>))
         .toList();
@@ -63,6 +73,8 @@ class CachedLedgerRepository implements LedgerRepository {
       (json['pending_transaction_ids'] as List<dynamic>? ?? const []).cast(),
     );
     _pendingProfile = json['pending_profile'] as bool? ?? false;
+    _pendingNotificationPreferences =
+        json['pending_notification_preferences'] as bool? ?? false;
     _pendingCategoryIds.addAll(
       (json['pending_category_ids'] as List<dynamic>? ?? const []).cast(),
     );
@@ -78,10 +90,12 @@ class CachedLedgerRepository implements LedgerRepository {
       jsonEncode({
         'version': 1,
         'profile': _profile?.toJson(),
+        'notification_preferences': _notificationPreferences.toJson(),
         'categories': _categories.map(_categoryToJson).toList(),
         'sources': _sources.map(_sourceToJson).toList(),
         'transactions': _transactions.map(_transactionToJson).toList(),
         'pending_profile': _pendingProfile,
+        'pending_notification_preferences': _pendingNotificationPreferences,
         'pending_category_ids': _pendingCategoryIds.toList()..sort(),
         'pending_source_ids': _pendingSourceIds.toList()..sort(),
         'pending_transaction_ids': _pendingTransactionIds.toList()..sort(),
@@ -102,10 +116,14 @@ class CachedLedgerRepository implements LedgerRepository {
       final transactions = profile == null
           ? <LedgerTransaction>[]
           : await remote.loadTransactions();
+      final notificationPreferences = profile == null
+          ? const NotificationPreferences()
+          : await remote.loadNotificationPreferences();
       _profile = profile;
       _categories = categories;
       _sources = sources;
       _transactions = transactions;
+      _notificationPreferences = notificationPreferences;
       isOffline = false;
       await _persist();
     } catch (_) {
@@ -130,6 +148,13 @@ class CachedLedgerRepository implements LedgerRepository {
             (value) => !_pendingCategoryIds.contains(value.id),
           ),
         ];
+        await _persist();
+      }
+      if (_pendingNotificationPreferences) {
+        _notificationPreferences = await remote.saveNotificationPreferences(
+          _notificationPreferences,
+        );
+        _pendingNotificationPreferences = false;
         await _persist();
       }
       for (final id in _pendingCategoryIds.toList()) {
@@ -175,6 +200,28 @@ class CachedLedgerRepository implements LedgerRepository {
   Future<List<Category>> loadCategories() async {
     await _ensureLocal();
     return List.unmodifiable(_categories);
+  }
+
+  @override
+  Future<NotificationPreferences> loadNotificationPreferences() async {
+    await _ensureLocal();
+    return _notificationPreferences;
+  }
+
+  @override
+  Future<NotificationPreferences> saveNotificationPreferences(
+    NotificationPreferences preferences,
+  ) async {
+    await _ensureLocal();
+    _notificationPreferences = preferences;
+    _pendingNotificationPreferences = true;
+    await _persist();
+    try {
+      await synchronize();
+    } catch (_) {
+      // The durable queue will retry when connectivity returns.
+    }
+    return _notificationPreferences;
   }
 
   @override

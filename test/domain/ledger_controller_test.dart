@@ -3,6 +3,8 @@ import 'dart:async';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:gainly/app/ledger_controller.dart';
 import 'package:gainly/core/domain/finance.dart';
+import 'package:gainly/features/notifications/notification_coordinator.dart';
+import 'package:gainly/features/notifications/notification_delivery.dart';
 
 import '../support/memory_repository.dart';
 
@@ -13,7 +15,78 @@ class DelayedRepository extends MemoryRepository {
       pending?.future ?? super.loadTransactions();
 }
 
+class PermissionDelivery implements NotificationDelivery {
+  bool permissionRequested = false;
+  int cancellationCount = 0;
+  @override
+  Future<void> initialize() async {}
+  @override
+  Future<bool> requestPermission() async {
+    permissionRequested = true;
+    return true;
+  }
+
+  @override
+  Future<void> scheduleDaily({
+    required DateTime date,
+    required String title,
+    required String body,
+  }) async {}
+  @override
+  Future<void> cancelDaily() async {
+    cancellationCount++;
+  }
+
+  @override
+  Future<void> show({required String title, required String body}) async {}
+}
+
 void main() {
+  test('onboarding requests permission for default important alerts', () async {
+    final delivery = PermissionDelivery();
+    final controller = LedgerController(
+      MemoryRepository(),
+      notifications: NotificationCoordinator(delivery),
+    );
+
+    await controller.saveProfile(
+      const Profile(
+        userId: 'owner',
+        firstName: 'Alex',
+        language: 'en',
+        currency: 'EUR',
+      ),
+    );
+
+    expect(delivery.permissionRequested, isTrue);
+    controller.dispose();
+  });
+
+  test(
+    'loading an existing profile bootstraps notification permission',
+    () async {
+      final delivery = PermissionDelivery();
+      final repository = MemoryRepository()
+        ..profile = const Profile(
+          userId: 'owner',
+          firstName: 'Alex',
+          language: 'en',
+          currency: 'EUR',
+        );
+      final controller = LedgerController(
+        repository,
+        notifications: NotificationCoordinator(delivery),
+      );
+
+      await controller.load();
+
+      expect(delivery.permissionRequested, isTrue);
+      await controller.endSession();
+      expect(delivery.cancellationCount, 1);
+      controller.dispose();
+    },
+  );
+
   test('late refresh cannot overwrite a confirmed save', () async {
     final repo = DelayedRepository()
       ..profile = const Profile(

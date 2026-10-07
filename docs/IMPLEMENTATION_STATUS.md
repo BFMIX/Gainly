@@ -1,6 +1,6 @@
 # Implementation status
 
-Updated: 2026-10-06.
+Updated: 2026-10-07.
 
 ## Implemented scope
 
@@ -22,6 +22,8 @@ Updated: 2026-10-06.
 - Four deterministic achievements derived from active financial data: First Entry, 3 Positive Days, 7-Day Tracking Streak, and Monthly Target Reached.
 - Restart-safe per-account local cache and mutation queue for profiles, categories, sources, and transaction create/edit/delete operations.
 - Automatic reconnect retry, visible offline/pending state, encrypted native cache files, timestamped tombstones, and server-enforced Last Write Wins transaction synchronization.
+- Owner-scoped notification preferences with a 20:00 local default, editable reminder time, independent important/optional toggles, offline persistence, and automatic rescheduling after activity.
+- iOS/Android daily scheduling, Android reboot restoration without exact-alarm access, sign-out cancellation, and localized alerts for Performance Balance risk, three adjacent negative days, streaks, achievements, monthly target completion, and positive milestones.
 - Integer minor-unit financial calculations and distinct no-activity/zero-after-activity states.
 - Owner-only schema/RLS, cross-owner foreign-key protection, soft-deletion fields, audit guards, explicit API grants, and atomic onboarding RPC.
 
@@ -29,7 +31,7 @@ Updated: 2026-10-06.
 
 A dedicated **Gainly** project exists in **BFMIX ORG**, region **eu-west-3 (Paris)**, reference `tzysspfpovbnmbwvocxh`. The connector quoted $0/month at creation. This is the observed project quote, not a guarantee for future usage or plan changes.
 
-All three migrations have been applied and their local versions match hosted history: `20261005060828` for the initial ledger, `20261005210125` for profile goals, and `20261006104411` for offline transaction synchronization. The ignored `config/development.json` connects the app using the project's publishable key. No service-role key is used.
+All five migrations have been applied and their local versions match hosted history: `20261005060828` for the initial ledger, `20261005210125` for profile goals, `20261006104411` for offline transaction synchronization, `20261007090109` for notification preferences, and `20261007091208` for positive-milestone preferences. The ignored `config/development.json` connects the app using the project's publishable key. No service-role key is used.
 
 Hosted RLS tests passed with two synthetic accounts inside a rolled-back transaction. No test users or ledger entries were retained. After the goals migration, the security advisor reported only that leaked-password protection is disabled; Gainly currently exposes OAuth and passwordless email rather than password sign-in. Reassess this setting before adding passwords. Performance advice listed two currently unused transaction indexes on the new empty ledger; these support owner/date and category access and are intentionally retained. See [Supabase's unused-index advisory](https://supabase.com/docs/guides/database/database-linter?lint=0005_unused_index).
 
@@ -43,8 +45,8 @@ Auth Site URL remains `http://localhost:7357` for local fallback. The hosted red
 - Google OAuth completed successfully through account selection, consent, Supabase callback, and return to the authenticated application on the public Pages release.
 - Final Web release, Android debug APK, and iOS simulator builds succeeded with the actual Gainly development configuration.
 - Final `flutter analyze` reported no issues.
-- 57 unit/widget tests passed: financial calculations, nullable baselines, included/excluded transactions, daily states, tombstones, failed writes/refreshes, idempotence, concurrent refresh handling, restart-safe offline queues, encrypted cache persistence, offline UI feedback, EN/FR/ES rendering, validation-message language changes, onboarding-to-dashboard flow, category/source management and reload, calendar/history behavior, statistics, persisted goal settings, dynamic pace, streaks, Positive Day Rate, deterministic achievements and insights, and GitHub Pages authentication redirect preservation.
-- 37 PGlite/PostgreSQL checks passed for all migrations, timestamp conflict ordering, category/source creation and editing, immutable copied Performance defaults, goal constraints, RLS, invalid/cross-owner references, currency guard, soft deletion, and anonymous access.
+- 73 unit/widget tests passed: financial calculations, nullable baselines, included/excluded transactions, daily states, tombstones, failed writes/refreshes, idempotence, concurrent refresh handling, restart-safe offline queues, encrypted cache persistence, offline UI feedback, EN/FR/ES rendering, validation-message language changes, onboarding-to-dashboard flow, category/source management and reload, calendar/history behavior, statistics, persisted goal settings, dynamic pace, streaks, Positive Day Rate, deterministic achievements and insights, notification rules/delivery/settings, and GitHub Pages authentication redirect preservation.
+- 43 PGlite/PostgreSQL checks passed for all migrations, notification preferences, timestamp conflict ordering, category/source creation and editing, immutable copied Performance defaults, goal constraints, RLS, invalid/cross-owner references, currency guard, soft deletion, and anonymous access.
 - Hosted SQL/RLS and Last Write Wins suites passed with rolled-back synthetic accounts; anonymous REST checks passed.
 - iOS simulator secure session and PKCE storage round-trip passed, including restoration through a new storage instance and deletion.
 - iOS simulator financial-flow integration passed: onboarding, transaction entry, repository persistence, and independent balance display. Both native integration tests passed.
@@ -57,13 +59,16 @@ The UI tests inject an in-memory repository; they do not prove a real authentica
 - Confirm email delivery/SMTP and perform a real email magic-link round trip.
 - Verify sign-in, persisted ledger reload, revocation, and cross-device recovery with a real authorized test account.
 - Confirm or replace the provisional `com.bfmix.gainly` identifier, then select the signing team and distribution configuration before the first store submission.
+- Confirm permission prompts, scheduled delivery, reboot restoration, and local-time changes on physical iOS and Android devices before store submission.
 
 The authenticated Supabase dashboard was used to configure and verify the callback URLs. Google is enabled with its provider credentials; Apple remains disabled pending its provider credentials. The CLI remains unauthenticated. No credential substitution or demo auth bypass is present.
 
 ## Subsequent MVP work
 
-Invitations and independent server-enforced sharing; notification preferences and delivery; optional CSV export.
+Invitations and independent server-enforced sharing; optional CSV export.
 
 The current slice retains cached financial data after restart, accepts offline writes, and resumes synchronization automatically. Last Write Wins uses client UTC timestamps with server-side row locking and a separate `synced_at` receipt timestamp. Device clock skew remains the known MVP limitation. A newly authenticated account still needs its first successful profile synchronization before server-generated default categories are available on another device.
+
+Scheduled daily reminders are available on iOS and Android. Web browsers can display immediate Gainly alerts while the page is open and permission is granted, but the current browser plugin cannot schedule a reminder after the page is closed.
 
 The connected Web release was inspected in the in-app browser: the French sign-in screen rendered, email validation ran locally without sending a message, the language selector switched the interface to Spanish, and Google sign-in completed successfully.

@@ -13,6 +13,8 @@ import '../features/calendar/calendar_screen.dart';
 import '../features/catalog/catalog_screen.dart';
 import '../features/dashboard/dashboard_screen.dart';
 import '../features/onboarding/profile_form.dart';
+import '../features/notifications/notification_settings_screen.dart';
+import '../features/notifications/notification_coordinator.dart';
 import '../features/statistics/statistics_screen.dart';
 import '../features/transactions/transaction_form.dart';
 import '../features/transactions/transactions_screen.dart';
@@ -29,9 +31,15 @@ String authRedirect({required bool isWeb, required Uri base}) {
 }
 
 class GainlyApp extends StatefulWidget {
-  const GainlyApp({super.key, this.client, this.localStore});
+  const GainlyApp({
+    super.key,
+    this.client,
+    this.localStore,
+    this.notifications,
+  });
   final SupabaseClient? client;
   final LedgerLocalStore? localStore;
+  final NotificationCoordinator? notifications;
   @override
   State<GainlyApp> createState() => _GainlyAppState();
 }
@@ -53,6 +61,7 @@ class _GainlyAppState extends State<GainlyApp> {
         : SessionGate(
             client: widget.client!,
             localStore: widget.localStore,
+            notifications: widget.notifications,
             onAccountChanged: () =>
                 navigatorKey.currentState?.popUntil((route) => route.isFirst),
             onLocale: (v) {
@@ -99,9 +108,11 @@ class SessionGate extends StatefulWidget {
     required this.onLocale,
     required this.onAccountChanged,
     this.localStore,
+    this.notifications,
   });
   final SupabaseClient client;
   final LedgerLocalStore? localStore;
+  final NotificationCoordinator? notifications;
   final VoidCallback onAccountChanged;
   final ValueChanged<Locale> onLocale;
   @override
@@ -116,9 +127,11 @@ class _SessionGateState extends State<SessionGate> {
     super.initState();
     userId = widget.client.auth.currentUser?.id;
     subscription = widget.client.auth.onAuthStateChange.listen(
-      (state) {
+      (state) async {
         final next = state.session?.user.id;
         if (mounted && next != userId) {
+          await widget.notifications?.endSession();
+          if (!mounted) return;
           widget.onAccountChanged();
           setState(() => userId = next);
         }
@@ -158,7 +171,10 @@ class _SessionGateState extends State<SessionGate> {
       : FinancialWorkspace(
           key: ValueKey(userId),
           userId: userId!,
-          controller: LedgerController(_repositoryFor(userId!)),
+          controller: LedgerController(
+            _repositoryFor(userId!),
+            notifications: widget.notifications,
+          ),
           onLocale: widget.onLocale,
           onLogout: () => widget.client.auth.signOut(),
         );
@@ -265,6 +281,12 @@ class _FinancialWorkspaceState extends State<FinancialWorkspace> {
 
   Future<void> showCatalog() => Navigator.of(context).push<void>(
     MaterialPageRoute(builder: (_) => CatalogScreen(controller: controller)),
+  );
+
+  Future<void> showNotificationSettings() => Navigator.of(context).push<void>(
+    MaterialPageRoute(
+      builder: (_) => NotificationSettingsScreen(controller: controller),
+    ),
   );
 
   Future<void> logout() async {
@@ -398,6 +420,11 @@ class _FinancialWorkspaceState extends State<FinancialWorkspace> {
                             },
                             onLocale: widget.onLocale,
                           ),
+                        ),
+                        TextButton.icon(
+                          onPressed: showNotificationSettings,
+                          icon: const Icon(Icons.notifications_outlined),
+                          label: Text(s.notificationSettings),
                         ),
                         TextButton.icon(
                           onPressed: showCatalog,

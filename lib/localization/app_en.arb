@@ -143,28 +143,57 @@
   "behindMonthlyTargetInsight": "You are behind this month's target pace.",
   "aheadMonthlyTargetInsight": "You are ahead of this month's target pace.",
   "requiredDailyPaceInsight": "This daily pace will keep your monthly target within reach.",
-  "viewStatistics": "View statistics"
-  ,"catalogManagement": "Categories and sources"
-  ,"manageCatalog": "Manage categories and sources"
-  ,"incomeCategories": "Income categories"
-  ,"expenseCategories": "Expense categories"
-  ,"sources": "Sources"
-  ,"addCategory": "Add category"
-  ,"newCategory": "New category"
-  ,"editCategory": "Edit category"
-  ,"categoryName": "Category name"
-  ,"categoryType": "Category type"
-  ,"defaultPerformance": "Include in Performance by default"
-  ,"addSource": "Add source"
-  ,"newSource": "New source"
-  ,"editSource": "Edit source"
-  ,"sourceName": "Source name"
-  ,"achievements": "Achievements"
-  ,"achievementFirstEntry": "First entry"
-  ,"achievementThreePositiveDays": "3 positive days"
-  ,"achievementSevenDayTrackingStreak": "7-day tracking streak"
-  ,"achievementMonthlyTargetReached": "Monthly target reached"
-  ,"offlineChangesPending": "Offline — your changes are saved on this device and will sync automatically."
-  ,"offlineCachedData": "Offline — showing data saved on this device."
-  ,"syncNow": "Sync now"
+  "viewStatistics": "View statistics",
+  "catalogManagement": "Categories and sources",
+  "manageCatalog": "Manage categories and sources",
+  "incomeCategories": "Income categories",
+  "expenseCategories": "Expense categories",
+  "sources": "Sources",
+  "addCategory": "Add category",
+  "newCategory": "New category",
+  "editCategory": "Edit category",
+  "categoryName": "Category name",
+  "categoryType": "Category type",
+  "defaultPerformance": "Include in Performance by default",
+  "addSource": "Add source",
+  "newSource": "New source",
+  "editSource": "Edit source",
+  "sourceName": "Source name",
+  "achievements": "Achievements",
+  "achievementFirstEntry": "First entry",
+  "achievementThreePositiveDays": "3 positive days",
+  "achievementSevenDayTrackingStreak": "7-day tracking streak",
+  "achievementMonthlyTargetReached": "Monthly target reached",
+  "offlineChangesPending": "Offline — your changes are saved on this device and will sync automatically.",
+  "offlineCachedData": "Offline — showing data saved on this device.",
+  "syncNow": "Sync now",
+  "notificationSettings": "Notifications",
+  "dailyReminder": "Daily reminder",
+  "dailyReminderHelp": "Remind me to record my day when there is no activity.",
+  "reminderTime": "Reminder time",
+  "importantAlerts": "Important alerts",
+  "negativeDaysWarning": "Several negative days",
+  "negativeDaysWarningHelp": "Warn me when three active days in a row are negative.",
+  "performanceBalanceWarning": "Performance Balance risk",
+  "performanceBalanceWarningHelp": "Warn me when Performance Balance reaches zero.",
+  "optionalEncouragement": "Optional encouragement",
+  "streakEncouragement": "Streak encouragement",
+  "badgeNotifications": "Achievement badges",
+  "goalProgressNotifications": "Goal progress",
+  "notificationSettingsSaved": "Notification settings saved",
+  "dailyReminderNotificationTitle": "How did today go?",
+  "dailyReminderNotificationBody": "Record today’s income and expenses in Gainly.",
+  "performanceBalanceRiskNotificationTitle": "Performance Balance alert",
+  "performanceBalanceRiskNotificationBody": "Your Performance Balance has reached zero. Review today’s activity.",
+  "negativeDaysNotificationTitle": "Three negative days",
+  "negativeDaysNotificationBody": "Three active days in a row were negative. Review your recent activity.",
+  "positiveMilestoneNotifications": "Positive milestones",
+  "monthlyGoalNotificationTitle": "Monthly goal reached",
+  "monthlyGoalNotificationBody": "You reached your monthly income target.",
+  "achievementUnlockedNotificationTitle": "Achievement unlocked",
+  "streakNotificationTitle": "Your momentum is growing",
+  "streakNotificationBody": "Your consistency has reached a new streak milestone.",
+  "positiveMilestoneNotificationTitle": "Positive milestone",
+  "positiveMilestoneNotificationBody": "Your Performance Balance reached a new positive milestone.",
+  "dailyReminderWebLimitation": "Daily background reminders require the iOS or Android app."
 }

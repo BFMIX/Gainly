@@ -536,4 +536,104 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get syncNow => 'Synchroniser';
+
+  @override
+  String get notificationSettings => 'Notifications';
+
+  @override
+  String get dailyReminder => 'Rappel quotidien';
+
+  @override
+  String get dailyReminderHelp =>
+      'Me rappeler d’enregistrer ma journée lorsqu’il n’y a aucune activité.';
+
+  @override
+  String get reminderTime => 'Heure du rappel';
+
+  @override
+  String get importantAlerts => 'Alertes importantes';
+
+  @override
+  String get negativeDaysWarning => 'Plusieurs jours négatifs';
+
+  @override
+  String get negativeDaysWarningHelp =>
+      'Me prévenir après trois jours actifs négatifs consécutifs.';
+
+  @override
+  String get performanceBalanceWarning => 'Risque sur la Performance Balance';
+
+  @override
+  String get performanceBalanceWarningHelp =>
+      'Me prévenir lorsque la Performance Balance atteint zéro.';
+
+  @override
+  String get optionalEncouragement => 'Encouragements facultatifs';
+
+  @override
+  String get streakEncouragement => 'Encouragement de série';
+
+  @override
+  String get badgeNotifications => 'Badges de réussite';
+
+  @override
+  String get goalProgressNotifications => 'Progression des objectifs';
+
+  @override
+  String get notificationSettingsSaved =>
+      'Préférences de notification enregistrées';
+
+  @override
+  String get dailyReminderNotificationTitle =>
+      'Comment s’est passée ta journée ?';
+
+  @override
+  String get dailyReminderNotificationBody =>
+      'Enregistre les revenus et dépenses du jour dans Gainly.';
+
+  @override
+  String get performanceBalanceRiskNotificationTitle =>
+      'Alerte Performance Balance';
+
+  @override
+  String get performanceBalanceRiskNotificationBody =>
+      'Ta Performance Balance a atteint zéro. Vérifie l’activité du jour.';
+
+  @override
+  String get negativeDaysNotificationTitle => 'Trois jours négatifs';
+
+  @override
+  String get negativeDaysNotificationBody =>
+      'Trois jours actifs consécutifs ont été négatifs. Vérifie ton activité récente.';
+
+  @override
+  String get positiveMilestoneNotifications => 'Étapes positives';
+
+  @override
+  String get monthlyGoalNotificationTitle => 'Objectif mensuel atteint';
+
+  @override
+  String get monthlyGoalNotificationBody =>
+      'Tu as atteint ton objectif de revenu mensuel.';
+
+  @override
+  String get achievementUnlockedNotificationTitle => 'Réussite débloquée';
+
+  @override
+  String get streakNotificationTitle => 'Ta dynamique progresse';
+
+  @override
+  String get streakNotificationBody =>
+      'Ta régularité a atteint une nouvelle étape de série.';
+
+  @override
+  String get positiveMilestoneNotificationTitle => 'Étape positive';
+
+  @override
+  String get positiveMilestoneNotificationBody =>
+      'Ta Performance Balance a atteint une nouvelle étape positive.';
+
+  @override
+  String get dailyReminderWebLimitation =>
+      'Les rappels quotidiens en arrière-plan nécessitent l’application iOS ou Android.';
 }

@@ -138,6 +138,38 @@ void main() {
     expect(find.text('Sync now'), findsOneWidget);
     expect(find.text('€12.00'), findsWidgets);
   });
+  testWidgets('notification preferences open from profile and persist', (
+    tester,
+  ) async {
+    final repo = MemoryRepository()
+      ..profile = const Profile(
+        userId: 'owner',
+        firstName: 'Alex',
+        language: 'en',
+        currency: 'EUR',
+        startingBalance: 0,
+        startingPerformanceBalance: 0,
+      );
+
+    await tester.pumpWidget(workspace(repo));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Profile'));
+    await tester.pumpAndSettle();
+    await tester.ensureVisible(find.text('Notifications'));
+    await tester.tap(find.text('Notifications'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Daily reminder'), findsOneWidget);
+    expect(find.text('8:00 PM'), findsOneWidget);
+    await tester.tap(find.text('Daily reminder'));
+    await tester.drag(find.byType(ListView), const Offset(0, -600));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const Key('saveNotificationSettings')));
+    await tester.pumpAndSettle();
+
+    expect(repo.notificationPreferences.dailyReminder, isFalse);
+  });
+
   testWidgets('profile opens category and source management', (tester) async {
     final repo = MemoryRepository()
       ..profile = const Profile(

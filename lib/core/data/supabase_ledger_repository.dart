@@ -1,6 +1,7 @@
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../domain/finance.dart';
+import '../domain/notification_preferences.dart';
 import 'ledger_repository.dart';
 
 class SupabaseLedgerRepository implements LedgerRepository {
@@ -30,6 +31,31 @@ class SupabaseLedgerRepository implements LedgerRepository {
       'p_daily_minimum': profile.dailyMinimum,
     },
   );
+
+  @override
+  Future<NotificationPreferences> loadNotificationPreferences() async {
+    final row = await client
+        .from('notification_preferences')
+        .select()
+        .eq('user_id', userId)
+        .maybeSingle();
+    return row == null
+        ? const NotificationPreferences()
+        : NotificationPreferences.fromJson(row);
+  }
+
+  @override
+  Future<NotificationPreferences> saveNotificationPreferences(
+    NotificationPreferences preferences,
+  ) async {
+    final row = await client
+        .from('notification_preferences')
+        .upsert({'user_id': userId, ...preferences.toJson()})
+        .select()
+        .single();
+    return NotificationPreferences.fromJson(row);
+  }
+
   @override
   Future<List<Category>> loadCategories() async =>
       (await client

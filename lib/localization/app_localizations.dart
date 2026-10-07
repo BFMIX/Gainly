@@ -1101,6 +1101,180 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Sync now'**
   String get syncNow;
+
+  /// No description provided for @notificationSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'Notifications'**
+  String get notificationSettings;
+
+  /// No description provided for @dailyReminder.
+  ///
+  /// In en, this message translates to:
+  /// **'Daily reminder'**
+  String get dailyReminder;
+
+  /// No description provided for @dailyReminderHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Remind me to record my day when there is no activity.'**
+  String get dailyReminderHelp;
+
+  /// No description provided for @reminderTime.
+  ///
+  /// In en, this message translates to:
+  /// **'Reminder time'**
+  String get reminderTime;
+
+  /// No description provided for @importantAlerts.
+  ///
+  /// In en, this message translates to:
+  /// **'Important alerts'**
+  String get importantAlerts;
+
+  /// No description provided for @negativeDaysWarning.
+  ///
+  /// In en, this message translates to:
+  /// **'Several negative days'**
+  String get negativeDaysWarning;
+
+  /// No description provided for @negativeDaysWarningHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Warn me when three active days in a row are negative.'**
+  String get negativeDaysWarningHelp;
+
+  /// No description provided for @performanceBalanceWarning.
+  ///
+  /// In en, this message translates to:
+  /// **'Performance Balance risk'**
+  String get performanceBalanceWarning;
+
+  /// No description provided for @performanceBalanceWarningHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Warn me when Performance Balance reaches zero.'**
+  String get performanceBalanceWarningHelp;
+
+  /// No description provided for @optionalEncouragement.
+  ///
+  /// In en, this message translates to:
+  /// **'Optional encouragement'**
+  String get optionalEncouragement;
+
+  /// No description provided for @streakEncouragement.
+  ///
+  /// In en, this message translates to:
+  /// **'Streak encouragement'**
+  String get streakEncouragement;
+
+  /// No description provided for @badgeNotifications.
+  ///
+  /// In en, this message translates to:
+  /// **'Achievement badges'**
+  String get badgeNotifications;
+
+  /// No description provided for @goalProgressNotifications.
+  ///
+  /// In en, this message translates to:
+  /// **'Goal progress'**
+  String get goalProgressNotifications;
+
+  /// No description provided for @notificationSettingsSaved.
+  ///
+  /// In en, this message translates to:
+  /// **'Notification settings saved'**
+  String get notificationSettingsSaved;
+
+  /// No description provided for @dailyReminderNotificationTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'How did today go?'**
+  String get dailyReminderNotificationTitle;
+
+  /// No description provided for @dailyReminderNotificationBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Record today’s income and expenses in Gainly.'**
+  String get dailyReminderNotificationBody;
+
+  /// No description provided for @performanceBalanceRiskNotificationTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Performance Balance alert'**
+  String get performanceBalanceRiskNotificationTitle;
+
+  /// No description provided for @performanceBalanceRiskNotificationBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Your Performance Balance has reached zero. Review today’s activity.'**
+  String get performanceBalanceRiskNotificationBody;
+
+  /// No description provided for @negativeDaysNotificationTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Three negative days'**
+  String get negativeDaysNotificationTitle;
+
+  /// No description provided for @negativeDaysNotificationBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Three active days in a row were negative. Review your recent activity.'**
+  String get negativeDaysNotificationBody;
+
+  /// No description provided for @positiveMilestoneNotifications.
+  ///
+  /// In en, this message translates to:
+  /// **'Positive milestones'**
+  String get positiveMilestoneNotifications;
+
+  /// No description provided for @monthlyGoalNotificationTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Monthly goal reached'**
+  String get monthlyGoalNotificationTitle;
+
+  /// No description provided for @monthlyGoalNotificationBody.
+  ///
+  /// In en, this message translates to:
+  /// **'You reached your monthly income target.'**
+  String get monthlyGoalNotificationBody;
+
+  /// No description provided for @achievementUnlockedNotificationTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Achievement unlocked'**
+  String get achievementUnlockedNotificationTitle;
+
+  /// No description provided for @streakNotificationTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Your momentum is growing'**
+  String get streakNotificationTitle;
+
+  /// No description provided for @streakNotificationBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Your consistency has reached a new streak milestone.'**
+  String get streakNotificationBody;
+
+  /// No description provided for @positiveMilestoneNotificationTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Positive milestone'**
+  String get positiveMilestoneNotificationTitle;
+
+  /// No description provided for @positiveMilestoneNotificationBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Your Performance Balance reached a new positive milestone.'**
+  String get positiveMilestoneNotificationBody;
+
+  /// No description provided for @dailyReminderWebLimitation.
+  ///
+  /// In en, this message translates to:
+  /// **'Daily background reminders require the iOS or Android app.'**
+  String get dailyReminderWebLimitation;
 }
 
 class _AppLocalizationsDelegate

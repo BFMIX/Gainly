@@ -1,6 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:gainly/core/data/cached_ledger_repository.dart';
 import 'package:gainly/core/domain/finance.dart';
+import 'package:gainly/core/domain/notification_preferences.dart';
 
 import '../../support/memory_repository.dart';
 
@@ -149,6 +150,46 @@ void main() {
       await repository.synchronize();
       expect(repository.pendingChanges, 0);
       expect(remote.entries.single.deletedAt, isNotNull);
+    },
+  );
+
+  test(
+    'notification preferences survive an offline restart and sync',
+    () async {
+      final remote = MemoryRepository()..profile = profile;
+      final store = TestLedgerLocalStore();
+      final first = CachedLedgerRepository(
+        userId: 'owner',
+        remote: remote,
+        store: store,
+      );
+      await first.loadProfile();
+      remote.failWrites = true;
+
+      const edited = NotificationPreferences(
+        dailyReminder: false,
+        reminderMinutes: 9 * 60 + 15,
+      );
+      await first.saveNotificationPreferences(edited);
+      expect(first.pendingChanges, 1);
+
+      remote.failReads = true;
+      final restarted = CachedLedgerRepository(
+        userId: 'owner',
+        remote: remote,
+        store: store,
+      );
+      await restarted.loadProfile();
+      final cached = await restarted.loadNotificationPreferences();
+      expect(cached.dailyReminder, isFalse);
+      expect(cached.reminderMinutes, 9 * 60 + 15);
+
+      remote
+        ..failReads = false
+        ..failWrites = false;
+      await restarted.synchronize();
+      expect(restarted.pendingChanges, 0);
+      expect(remote.notificationPreferences.dailyReminder, isFalse);
     },
   );
 

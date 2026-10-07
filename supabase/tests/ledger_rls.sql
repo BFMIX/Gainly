@@ -6,6 +6,8 @@ insert into auth.users(id) values (current_setting('gainly.test_owner')::uuid), 
 set local role authenticated;
 select set_config('request.jwt.claim.sub', current_setting('gainly.test_owner'), true);
 select public.save_profile('Synthetic test owner','en','EUR',100000,25000,150000,6000);
+insert into public.notification_preferences(user_id, reminder_minutes, positive_milestones)
+values (auth.uid(), 1230, true);
 select set_config('gainly.test_category', (select id::text from public.categories where translation_key='delivery'), true);
 insert into public.transactions(user_id,amount_minor,type,date,category_id,payment_method,counts_toward_performance)
 values (auth.uid(),5029,'income',current_date,current_setting('gainly.test_category')::uuid,'cash',true);
@@ -25,17 +27,27 @@ do $$ begin
   if (select sum(amount_minor) from public.transactions where user_id=auth.uid()) <> 5729 then raise exception 'Owner read failed'; end if;
   if (select monthly_target_minor from public.profiles where user_id=auth.uid()) <> 150000 then raise exception 'Monthly target persistence failed'; end if;
   if (select daily_minimum_minor from public.profiles where user_id=auth.uid()) <> 6000 then raise exception 'Daily minimum persistence failed'; end if;
+  if (select reminder_minutes from public.notification_preferences where user_id=auth.uid()) <> 1230 then raise exception 'Notification preference persistence failed'; end if;
+  if not (select positive_milestones from public.notification_preferences where user_id=auth.uid()) then raise exception 'Positive milestone preference persistence failed'; end if;
   if (select amount_minor from public.transactions where id=current_setting('gainly.test_sync_transaction')::uuid) <> 700 then
     raise exception 'Older synchronization overwrote newer data';
   end if;
 end $$;
 select set_config('request.jwt.claim.sub', current_setting('gainly.test_other'), true);
 do $$ begin
-  if exists(select 1 from public.profiles) or exists(select 1 from public.transactions) or exists(select 1 from public.categories) then
+  if exists(select 1 from public.profiles) or exists(select 1 from public.transactions) or exists(select 1 from public.categories) or exists(select 1 from public.notification_preferences) then
     raise exception 'Cross-owner read leak';
   end if;
 end $$;
 select public.save_profile('Synthetic second owner','es','EUR',null,null);
+do $$ begin
+  begin
+    insert into public.notification_preferences(user_id)
+    values(current_setting('gainly.test_owner')::uuid);
+  exception when insufficient_privilege then return;
+  end;
+  raise exception 'Cross-owner notification preference write accepted';
+end $$;
 do $$ begin
   begin
     perform public.sync_transaction(
@@ -86,6 +98,12 @@ do $$ begin
   exception when insufficient_privilege then return;
   end;
   raise exception 'Anonymous ledger access accepted';
+end $$;
+do $$ begin
+  begin perform 1 from public.notification_preferences;
+  exception when insufficient_privilege then return;
+  end;
+  raise exception 'Anonymous notification preference access accepted';
 end $$;
 do $$ begin
   begin

@@ -40,6 +40,13 @@ assert.equal(await scalar('select monthly_target_minor::int from public.profiles
 assert.equal(await scalar('select daily_minimum_minor::int from public.profiles'), 6000); checks++;
 await rejects("update public.profiles set monthly_target_minor=0");
 await rejects("update public.profiles set daily_minimum_minor=-1");
+await db.query(`insert into public.notification_preferences(
+  user_id,daily_reminder,reminder_minutes,negative_days_warning,
+  performance_balance_warning,positive_milestones)
+  values ($1,true,1230,true,true,true)`, [owner]);
+assert.equal(await scalar('select reminder_minutes::int from public.notification_preferences'), 1230); checks++;
+assert.equal(await scalar('select positive_milestones from public.notification_preferences'), true); checks++;
+await rejects('update public.notification_preferences set reminder_minutes=1440');
 const delivery = await scalar("select id from public.categories where translation_key = 'delivery'");
 const fuel = await scalar("select id from public.categories where translation_key = 'fuel'");
 await db.query("insert into public.sources(user_id,name) values ($1,'Example courier')", [owner]);
@@ -79,7 +86,10 @@ await asUser(other);
 assert.equal(await scalar('select count(*)::int from public.profiles'), 0); checks++;
 assert.equal(await scalar('select count(*)::int from public.transactions'), 0); checks++;
 assert.equal(await scalar('select count(*)::int from public.categories'), 0); checks++;
+assert.equal(await scalar('select count(*)::int from public.notification_preferences'), 0); checks++;
 await db.query("select public.save_profile('Sam','es','EUR',null,null)");
+await rejects(`insert into public.notification_preferences(user_id)
+  values ($1)`, [owner]);
 const otherCategory = await scalar("select id from public.categories where translation_key='delivery'");
 await rejects(insert, [other, 100, 'income', delivery, null, true]);
 await rejects(insert, [other, 100, 'income', otherCategory, source, true]);
@@ -95,6 +105,7 @@ assert.equal(sourceUpdate.rows.length, 0); checks++;
 assert.equal(await scalar('select starting_balance_minor from public.profiles'), null); checks++;
 await db.exec('reset role; set role anon');
 await rejects('select * from public.transactions');
+await rejects('select * from public.notification_preferences');
 await rejects("select public.save_profile('Guest','en','EUR',0,0)");
 await rejects(syncTransaction, [syncId, 100, delivery, '2032-01-01T12:00:00Z']);
 await db.close();
